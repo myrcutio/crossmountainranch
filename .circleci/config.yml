@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8-browsers
+    working_directory: ~/app
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-{{ checksum "package.json" }}
+      - run: npm i
+      - save_cache:
+          key: node_modules-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          command: |
+            npm run build
+      - persist_to_workspace:
+          root: ~/app
+          paths:
+            - out
+  deploy:
+    docker:
+      - image: cibuilds/aws
+    working_directory: ~/app
+    steps:
+      - attach_workspace:
+          at: ~/app
+      - run:
+          command: |
+            if [ -f ./out/index.html ]; then
+              echo "Deploying to $S3_BUCKET"
+              aws s3 sync out s3://$S3_BUCKET/ --delete --metadata-directive REPLACE --cache-control 60 --acl public-read
+
+              echo "Invalidating Cloudfront cache for distribution ID: ${CDN_DISTRIBUTION_ID_PROD}"
+              aws cloudfront create-invalidation --distribution-id $CDN_DISTRIBUTION_ID_PROD --paths "/*"
+            else
+              echo "index.html not found, aborting deployment"
+              exit 1
+            fi
+  test:
+    docker:
+      - image: circleci/node:8-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-{{ checksum "package.json" }}
+      - run: sudo npm i -g eslint sass-lint pug-lint eslint-plugin-react
+      - run: npm run test
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master

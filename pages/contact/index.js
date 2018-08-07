@@ -10,11 +10,14 @@ export default () => (
         white-space: pre-line;
         padding-left: 50px;
       }
+      .contactEmail {
+        padding-left: 50px;
+      }
     `}</style>
     <h3>Contact Information</h3>
     <div className="contactInfo">{contentModel.contactBlock}</div>
-    <div><Mailto email='srsneed@aol.com' /></div>
+    <div className="contactEmail">Email: <Mailto email={contentModel.contactEmail} /></div>
     <h3>Contact Board of Directors:</h3>
-   <div><Mailto email='crossmtnranchsatx@gmail.com' /></div>
+    <div className="contactEmail">Email: <Mailto email={contentModel.boardEmail} /></div>
   </div>
 )

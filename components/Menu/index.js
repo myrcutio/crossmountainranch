@@ -1,5 +1,7 @@
 import React from 'react'
-import Mailto from 'react-protected-mailto'
+// import Mailto from 'react-protected-mailto'
+import EmailObfuscate from 'email-obfuscate'
+
 import contentModel from '../../data/content'
 
 export default ({links, footer}) => (
@@ -20,6 +22,13 @@ export default ({links, footer}) => (
         white-space: pre;
         text-align: right;
       }
+      .menuEmail {
+        text-align: right;
+      }
+      .menu .menuEmail a {
+        padding-top: 0;
+        display: inline-block;
+      }
     `}</style>
     {links.map((l, i) => (
       <div key={i}>
@@ -27,6 +36,17 @@ export default ({links, footer}) => (
       </div>
     ))}
     <div className="footer">{footer}</div>
-     <div><Mailto email='srsneed@aol.com' /></div>
+    <div className="menuEmail">
+      Email: <EmailObfuscate(
+      name='test'
+      domain='example'
+      tld='com'
+      altText='Email us'
+    }) />
+      <Mailto
+                email={contentModel.contactEmail}
+                obfuscatedHref=""
+              />
+    </div>
   </div>
 )

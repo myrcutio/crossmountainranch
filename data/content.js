@@ -19,6 +19,7 @@ const contentModel = {
     url: '/contact',
     label: 'Contact'
   }],
+  boardEmail: "crossmtnranchsatx@gmail.com",
   contactEmail: "srsneed@aol.com",
   contactBlock: `Association Manager
 
