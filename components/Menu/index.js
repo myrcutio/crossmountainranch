@@ -35,10 +35,7 @@ export default ({links, footer}) => (
     ))}
     <div className="footer">{footer}</div>
     <div className="menuEmail">
-      Email: <Mailto
-                email={contentModel.contactEmail}
-                obfuscatedHref=""
-              />
+      Email: <Mailto email={contentModel.contactEmail} />
     </div>
   </div>
 )
