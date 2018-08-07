@@ -1,0 +1,19 @@
+{
+  "name": "cross-mountain-ranch",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build && next export",
+    "start": "next start"
+  },
+  "author": "James Balentine, Ben Balentine",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "next": "^6.1.1",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-protected-mailto": "^1.0.3"
+  }
+}
