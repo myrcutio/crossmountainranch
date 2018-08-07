@@ -20,6 +20,13 @@ export default ({links, footer}) => (
         white-space: pre;
         text-align: right;
       }
+      .menuEmail {
+        text-align: right;
+      }
+      .menu .menuEmail a {
+        padding-top: 0;
+        display: inline-block;
+      }
     `}</style>
     {links.map((l, i) => (
       <div key={i}>
@@ -27,6 +34,11 @@ export default ({links, footer}) => (
       </div>
     ))}
     <div className="footer">{footer}</div>
-     <div><Mailto email='srsneed@aol.com' /></div>
+    <div className="menuEmail">
+      Email: <Mailto
+                email={contentModel.contactEmail}
+                obfuscatedHref=""
+              />
+    </div>
   </div>
 )
