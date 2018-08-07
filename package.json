@@ -11,7 +11,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "email-obfuscate": "0.0.6",
     "next": "^6.1.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

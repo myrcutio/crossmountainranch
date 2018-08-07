@@ -1,7 +1,5 @@
 import React from 'react'
-// import Mailto from 'react-protected-mailto'
-import EmailObfuscate from 'email-obfuscate'
-
+import Mailto from 'react-protected-mailto'
 import contentModel from '../../data/content'
 
 export default ({links, footer}) => (
@@ -37,13 +35,7 @@ export default ({links, footer}) => (
     ))}
     <div className="footer">{footer}</div>
     <div className="menuEmail">
-      Email: <EmailObfuscate(
-      name='test'
-      domain='example'
-      tld='com'
-      altText='Email us'
-    }) />
-      <Mailto
+      Email: <Mailto
                 email={contentModel.contactEmail}
                 obfuscatedHref=""
               />
