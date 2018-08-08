@@ -99,16 +99,16 @@ Homeowners are welcome - Please email and let us know you're coming...Hope to se
     }]
   },
   documents: [
-    {url: "./static/documents/ProposedRevisions.pdf", title: "Proposed Revisions 2018", label: "Proposed Document Revisions"},
-    {url: "./static/documents/Articles.pdf", title: "Articles of Incorporation", label: "Articles of Incorporation - 1980"},
-    {url: "./static/documents/SecondAmendDR.pdf", title: "Deed Restrictions - CMR Units I-IV", label: "Second Amended Deed Restrictions - 2015"},
-    {url: "./static/documents/bylaws2012.pdf", title: "Bylaws of the Association", label: "Bylaws - 2012"},
-    {url: "./static/documents/Collections.pdf", title: "Policies", label: "Assessment Collections and Payment Plan Policy"},
-    {url: "./static/documents/Copying.pdf", label: "Records Copying policy"},
-    {url: "./static/documents/Retention.pdf", label: "Records Retention Policy"},
-    {url: "./static/documents/Restrictions.pdf", label: "Restrictions Enforcement Policy"},
-    {url: "./static/documents/ARCGuidelines.pdf", title: "Architectural Review Information", label: "Architectural Review Guidelines"},
-    {url: "./static/documents/ARCForm.pdf", label: "Architectural Review Application Form"}
+    {url: "/static/documents/ProposedRevisions.pdf", title: "Proposed Revisions 2018", label: "Proposed Document Revisions"},
+    {url: "/static/documents/Articles.pdf", title: "Articles of Incorporation", label: "Articles of Incorporation - 1980"},
+    {url: "/static/documents/SecondAmendDR.pdf", title: "Deed Restrictions - CMR Units I-IV", label: "Second Amended Deed Restrictions - 2015"},
+    {url: "/static/documents/bylaws2012.pdf", title: "Bylaws of the Association", label: "Bylaws - 2012"},
+    {url: "/static/documents/Collections.pdf", title: "Policies", label: "Assessment Collections and Payment Plan Policy"},
+    {url: "/static/documents/Copying.pdf", label: "Records Copying policy"},
+    {url: "/static/documents/Retention.pdf", label: "Records Retention Policy"},
+    {url: "/static/documents/Restrictions.pdf", label: "Restrictions Enforcement Policy"},
+    {url: "/static/documents/ARCGuidelines.pdf", title: "Architectural Review Information", label: "Architectural Review Guidelines"},
+    {url: "/static/documents/ARCForm.pdf", label: "Architectural Review Application Form"}
   ],
   news: [{
     title: "Cross Mountain Ranch Homeowners Association Annual Meeting",
