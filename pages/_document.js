@@ -1,9 +1,7 @@
 import Document, { Head, Main, NextScript } from 'next/document'
 import Header from '../components/Header'
 import Logo from '../components/Logo'
-import Menu from '../components/Menu'
 import contentModel from '../data/content'
-import Mailto from 'react-protected-mailto'
 
 export default class MyDocument extends Document {
   static async getInitialProps({ renderPage }) {
@@ -30,6 +28,7 @@ export default class MyDocument extends Document {
           <title>Cross Mountain Ranch Homeowners Cooperative</title>
         </Head>
         <body>
+          <NextScript/>
           <div className="contentWrapper">
             <style>{`
               body {
@@ -55,13 +54,7 @@ export default class MyDocument extends Document {
               <Logo />
               <Header data={contentModel.header} />
             </div>
-            <div className="main">
-              <Menu links={contentModel.sitemap} footer={contentModel.contactBlock}/>
-              <div className="mainContent">
-                <Main />
-                <NextScript />
-              </div>
-            </div>
+            <Main />
           </div>
         </body>
       </html>
