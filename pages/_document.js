@@ -1,12 +1,13 @@
 import Document, { Head, Main, NextScript } from 'next/document'
+import fetch from 'isomorphic-fetch'
 import Header from '../components/Header'
 import Logo from '../components/Logo'
-import contentModel from '../data/content'
 
 export default class MyDocument extends Document {
   static async getInitialProps({ renderPage }) {
     const page = renderPage()
-    return { ...page }
+    const contentModel = await (await fetch('https://www.crossmountainranch.org/data/content.json')).json()
+    return { ...page, contentModel }
   }
 
   constructor(props) {
@@ -28,7 +29,6 @@ export default class MyDocument extends Document {
           <title>Cross Mountain Ranch Homeowners Cooperative</title>
         </Head>
         <body>
-          <NextScript/>
           <div className="contentWrapper">
             <style>{`
               body {
@@ -52,9 +52,10 @@ export default class MyDocument extends Document {
             `}</style>
             <div className="top">
               <Logo />
-              <Header data={contentModel.header} />
+              <Header data={this.props.contentModel.header} />
             </div>
             <Main />
+            <NextScript/>
           </div>
         </body>
       </html>
