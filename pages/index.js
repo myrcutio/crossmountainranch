@@ -2,6 +2,7 @@ import contentModel from '../static/data/content.js'
 
 import Menu from '../components/Menu'
 import News from '../components/News'
+import "../styles/styles.sass"
 
 const Home = ({ contentModel }) => (
   <div className="main">
