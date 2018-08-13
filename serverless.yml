@@ -1,0 +1,27 @@
+service: cmr-cms
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  timeout: 59
+  environment:
+    host: ${opt:host}
+    pass: ${opt:pass}
+    user: ${opt:user}
+  vpc:
+    securityGroupIds:
+      - ${opt:securitygroup}
+    subnetIds:
+      - ${opt:subnetid1}
+      - ${opt:subnetid2}
+      - ${opt:subnetid3}
+
+functions:
+  page:
+    handler: scripts/lambda/page.httpGET
+    events:
+      - http:
+          path: /page/{slug+}
+          method: get
