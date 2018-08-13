@@ -36,6 +36,7 @@ export default class MyDocument extends Document {
           <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Forum|PT+Sans+Narrow:700|PT+Serif|Tinos:700" />
         </Head>
         <body>
+          <NextScript/>
           <div className="content-wrapper">
             <Logo />
             <Main />
@@ -44,7 +45,6 @@ export default class MyDocument extends Document {
               Copyright 2018 &copy; Cross Mountain Ranch Homeowners Cooperative
             </div>*/}
           </div>
-          <NextScript/>
         </body>
       </html>
     )

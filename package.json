@@ -13,6 +13,9 @@
   "dependencies": {
     "@zeit/next-sass": "^0.2.0",
     "isomorphic-fetch": "^2.2.1",
+    "lodash.find": "^4.6.0",
+    "moment": "^2.22.2",
+    "mysql": "github:mysqljs/mysql",
     "next": "^6.1.1",
     "node-sass": "^4.9.3",
     "react": "^16.4.1",

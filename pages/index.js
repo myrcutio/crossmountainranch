@@ -1,4 +1,7 @@
-import contentModel from '../static/data/content.js'
+// import contentModel from '../static/data/content.js'
+import fetch from 'isomorphic-fetch'
+import moment from 'moment'
+import * as _find from 'lodash.find'
 
 import Menu from '../components/Menu'
 import News from '../components/News'
@@ -6,30 +9,38 @@ import "../styles/styles.sass"
 
 const Home = ({ contentModel }) => (
   <div className="main">
-    <Menu links={contentModel.sitemap} footer={contentModel.contactBlock}/>
+    <Menu />
 
     <div className="main-content">
-      <div className="notice">
-        <div className="notice-title">{contentModel.alert.title}</div>
-        <div className="notice-meta">{contentModel.alert.date} - {contentModel.alert.location}</div>
-        <div className="notice-description">{contentModel.alert.description}</div>
-      </div>
+      {contentModel.regions.alerts.map((a, i) => {
+        return (
+          <div key={i} className="notice">
+            <div className="notice-title">{a.title}</div>
+            <div className="notice-meta">{moment(a.date).utc().format('dddd, MMMM DD, YYYY HH:mma')} - {a.location}</div>
+            <div className="notice-description">{a.description}</div>
+          </div>
+        )
+      })}
 
       <p className="description">
-        {contentModel.homepage.description}
+        {_find(contentModel.regions.sections, s => s.content).content}
       </p>
 
-      <News />
+      {
+        contentModel && contentModel.regions && contentModel.regions.news && contentModel.regions.news.length ? (
+          <News articles={contentModel.regions.news} />
+        ) : null
+      }
 
       <p className="disclosure">
-        {contentModel.homepage.disclosure}
+        {_find(contentModel.regions.sections, s => s.disclosure).disclosure}
       </p>
     </div>
   </div>
 )
 
 Home.getInitialProps = async () => {
-  // const contentModel = await (await fetch('https://www.crossmountainranch.org/data/content.json')).json()
+  const contentModel = await (await fetch('https://h0609pjup0.execute-api.us-west-2.amazonaws.com/dev/page/homepage')).json()
   return { contentModel }
 }
 

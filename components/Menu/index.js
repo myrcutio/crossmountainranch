@@ -1,11 +1,24 @@
 import React from 'react'
 import Mailto from 'react-protected-mailto'
-
 import contentModel from '../../static/data/content'
+
+const sitemap =[{
+  url: '/',
+  label: 'Home'
+}, {
+  url: '/board',
+  label: 'Board of Directors'
+}, {
+  url: '/documents',
+  label: 'Documents'
+}, {
+  url: '/contact',
+  label: 'Contact'
+}]
 
 export default () => (
   <div className="menu">
-    {contentModel.sitemap.map((l, i) => (
+    {sitemap.map((l, i) => (
       <div key={i} className="menu-item">
         <a href={l.url}>{l.label}</a>
       </div>
