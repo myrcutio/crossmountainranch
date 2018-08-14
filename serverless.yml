@@ -2,6 +2,9 @@ service: cmr-cms
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
+custom:
+  cognitoPool: ${opt:cognitopool}
+
 provider:
   name: aws
   runtime: nodejs8.10
@@ -19,9 +22,43 @@ provider:
       - ${opt:subnetid3}
 
 functions:
-  page:
+  pageGet:
     handler: scripts/lambda/page.httpGET
     events:
       - http:
-          path: /page/{slug+}
+          path: /path/{slug+}
           method: get
+
+  pagePOST:
+    handler: scripts/lambda/page.httpPOST
+    events:
+      - http:
+          path: /page
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoPool}
+  pagePUT:
+    handler: scripts/lambda/page.httpPUT
+    events:
+      - http:
+          path: /page/{pageId}
+          method: put
+          authorizer:
+            arn: ${self:custom.cognitoPool}
+
+  noticePOST:
+    handler: scripts/lambda/notice.httpPOST
+    events:
+      - http:
+          path: /notice
+          method: post
+          authorizer:
+            arn: ${self:custom.cognitoPool}
+  noticePUT:
+    handler: scripts/lambda/notice.httpPUT
+    events:
+      - http:
+          path: /notice/{noticeId}
+          method: put
+          authorizer:
+            arn: ${self:custom.cognitoPool}

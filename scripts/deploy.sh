@@ -1,30 +1,12 @@
 #!/usr/bin/env bash
 
-source ./.env
-
-while [[ $# -gt 1 ]]
-do
-key="$1"
-
-case $key in
-    -p|--password)
-    DBPASS="$2"
-    shift # past argument
-    ;;
-    -d|--db)
-    DBHOST="$2"
-    shift # past argument
-    ;;
-    *)
-    ;;
-esac
-shift # past argument or value
-done
+source ./.deploy-env
 
 serverless deploy \
---stage dev \
+--stage $STAGE \
 --aws-profile $AWSPROFILE \
 --region us-west-2 \
+--cognitopool "$COGNITO_POOL" \
 --securitygroup "$LAMBDA_SECURITY_PHYSICAL_ID" \
 --subnetid1 $SUBNET_1 \
 --subnetid2 $SUBNET_2 \

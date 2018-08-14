@@ -29,11 +29,10 @@ CREATE TABLE `sections` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255),
   `subtitle` VARCHAR(255),
-  `date` DATETIME,
   `disclosure` VARCHAR(5000),
   `content` VARCHAR(10000),
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC));
+  `orderWeight` INT,
+  PRIMARY KEY (`id`));
 
 CREATE TABLE `members` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -42,15 +41,13 @@ CREATE TABLE `members` (
   `fullname` VARCHAR(1000) NOT NULL,
   `memberTitle` VARCHAR(255),
   `memberPosition` VARCHAR(255),
-  `email` VARCHAR(255) UNIQUE,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC));
+  `memberEmail` VARCHAR(255) UNIQUE,
+  PRIMARY KEY (`id`));
 
 CREATE TABLE `committees` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `title` VARCHAR(1000) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC));
+  `committeeName` VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (`id`));
 
 CREATE TABLE `committeeMemberAssociation` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -63,24 +60,24 @@ CREATE TABLE `committeeMemberAssociation` (
 
 CREATE TABLE `documents` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `url` VARCHAR(1000) NOT NULL,
-  `title` VARCHAR(255) NOT NULL,
-  `label` VARCHAR(255) NOT NULL,
+  `docUrl` VARCHAR(1000) NOT NULL,
+  `docTitle` VARCHAR(255) NOT NULL,
+  `docLabel` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`));
 
 CREATE TABLE `news` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `published` DATETIME,
-  `title` VARCHAR(255) NOT NULL,
-  `subtitle` VARCHAR(512) NOT NULL,
-  `text` VARCHAR(10000) NOT NULL,
+  `newsHeadline` VARCHAR(255) NOT NULL,
+  `newsSubtitle` VARCHAR(512) NOT NULL,
+  `newsContent` VARCHAR(10000) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `publishedDate` (`published` DESC));
 
-CREATE TABLE `alerts` (
+CREATE TABLE `notices` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `title` VARCHAR(5000) NOT NULL,
-  `date` DATETIME,
-  `location` VARCHAR(255),
-  `description` VARCHAR(1000),
+  `noticeTitle` VARCHAR(5000) NOT NULL,
+  `noticeDate` DATETIME,
+  `noticeLocation` VARCHAR(255),
+  `noticeContent` VARCHAR(1000),
   PRIMARY KEY (`id`));
