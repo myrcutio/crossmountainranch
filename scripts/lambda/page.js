@@ -37,33 +37,6 @@ WHERE content.pages.slug = ${JSON.stringify(slug)}
 
   connection.query(pageQuery, function (error, res, fields) {
     if (error) throw error;
-    console.log('returned data: ', res)
-
-    let regions = {
-      sections: [],
-      news: [],
-      alerts: [],
-      committees: [],
-      documents: []
-    }
-
-    res.map((region, i) => {
-      if (region.alertId !== null) {
-        regions.alerts.push(region)
-      }
-      if (region.sectionId !== null) {
-        regions.sections.push(region)
-      }
-      if (region.newsId !== null) {
-        regions.news.push(region)
-      }
-      if (region.committeeId !== null) {
-        regions.committees.push(region)
-      }
-      if (region.documentId !== null) {
-        regions.documents.push(region)
-      }
-    })
 
     let response = {
       headers: {
@@ -71,7 +44,7 @@ WHERE content.pages.slug = ${JSON.stringify(slug)}
       },
       body: JSON.stringify({
         slug,
-        regions
+        regions: res
       }),
       statusCode: 200
     }
@@ -133,7 +106,6 @@ function httpDELETE(event, context) {
 }
 
 function httpPOST(event, context) {
-  console.log(event)
   const eventBody = JSON.parse(_get(event, 'body', '{}'))
   console.log(eventBody)
   if (!eventBody) {

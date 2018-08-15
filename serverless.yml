@@ -88,3 +88,22 @@ functions:
           cors: true
           authorizer:
             type: AWS_IAM
+
+  contentPOST:
+    handler: scripts/lambda/contentCRUD.httpPOST
+    events:
+      - http:
+          path: /{table}
+          method: post
+          cors: true
+          authorizer:
+            type: AWS_IAM
+  contentPUT:
+    handler: scripts/lambda/contentCRUD.httpPUT
+    events:
+      - http:
+          path: /{table}/{id}
+          method: put
+          cors: true
+          authorizer:
+            type: AWS_IAM

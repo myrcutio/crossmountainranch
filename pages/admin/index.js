@@ -5,7 +5,8 @@ import Amplify, { API } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react'
 
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
-import DeletePageForm from "../../components/AdminForms/DeletePageForm";
+import ListPagesForm from "../../components/AdminForms/ListPagesForm";
+import Layout from "../../components/Layout";
 
 const ProdAPIEndpoint = "https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod"
 
@@ -30,14 +31,13 @@ Amplify.configure({
 
 class Admin extends Component {
   state = {
-    pages: []
+    pages: [],
+    currentPage: '',
+    regions: {}
   }
 
   componentWillMount = async () => {
-    const pages = await (await fetch(`${ProdAPIEndpoint}/path`)).json()
-    this.setState({
-      pages
-    })
+    this.getPages()
   }
 
   handleCreate = async ({ slug, label }) => {
@@ -59,11 +59,45 @@ class Admin extends Component {
     })
   }
 
+  handleGetPage = async (slug) => {
+    const data = await (await fetch(`${ProdAPIEndpoint}/path/${slug}`)).json()
+    this.setState({
+      regions: {
+        [slug]: data.regions
+      },
+      currentPage: slug
+    })
+  }
+
+  handleCreateSection = ({ title, content }) => async () => {
+    await API.post("ProdAPI", `/sections`, {
+      body: { title, content }
+    })
+  }
+
+  handleCreateNews = ({ newsHeadline, newsSubtitle, newsContent}) => async () => {
+    await API.post("ProdAPI", `/news`, {
+      body: { newsHeadline, newsSubtitle, newsContent}
+    })
+  }
+
   render() {
     return (
-      <div className="main">
-        <CreatePageForm handleSubmit={this.handleCreate} />
-        <DeletePageForm pages={this.state.pages} handleSubmit={this.handleDelete} />
+      <div>
+        <div className="main">
+          <CreatePageForm handleSubmit={this.handleCreate} />
+          <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} />
+          <button onClick={this.handleCreateSection({ title: "test title", content: "test contents!"})}>create section</button>
+
+          <button onClick={this.handleCreateNews({
+            newsHeadline: "extra extra!",
+            newsSubtitle: "read all about it",
+            newsContent: "dang"
+          })}>create news</button>
+        </div>
+        {
+          this.state.currentPage && this.state.regions[this.state.currentPage].length  ? <Layout regions={this.state.regions[this.state.currentPage]}/> : null
+        }
       </div>
     )
   }

@@ -30,7 +30,7 @@ CREATE TABLE `sections` (
   `title` VARCHAR(255),
   `subtitle` VARCHAR(255),
   `disclosure` VARCHAR(5000),
-  `content` VARCHAR(10000),
+  `content` VARCHAR(10000) NOT NULL,
   `orderWeight` INT,
   PRIMARY KEY (`id`));
 
