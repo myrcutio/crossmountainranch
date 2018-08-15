@@ -2,6 +2,7 @@
 import fetch from 'isomorphic-fetch'
 import moment from 'moment'
 import * as _find from 'lodash.find'
+import * as _get from 'lodash.get'
 
 import Menu from '../components/Menu'
 import News from '../components/News'
@@ -23,7 +24,7 @@ const Home = ({ contentModel }) => (
       })}
 
       <p className="description">
-        {_find(contentModel.regions.sections, s => s.content).content}
+        {_get(_find(contentModel.regions.sections, s => s.content), 'content', null)}
       </p>
 
       {
@@ -33,14 +34,14 @@ const Home = ({ contentModel }) => (
       }
 
       <p className="disclosure">
-        {_find(contentModel.regions.sections, s => s.disclosure).disclosure}
+        {_get(_find(contentModel.regions.sections, s => s && s.disclosure), 'disclosure', null)}
       </p>
     </div>
   </div>
 )
 
 Home.getInitialProps = async () => {
-  const contentModel = await (await fetch('https://h0609pjup0.execute-api.us-west-2.amazonaws.com/dev/page/homepage')).json()
+  const contentModel = await (await fetch('https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod/path/homepage')).json()
   return { contentModel }
 }
 

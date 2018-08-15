@@ -2,13 +2,18 @@ service: cmr-cms
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
+plugins:
+  - serverless-plugin-include-dependencies
+package:
+  individually: true
+
 custom:
   cognitoPool: ${opt:cognitopool}
 
 provider:
   name: aws
   runtime: nodejs8.10
-  timeout: 59
+  timeout: 30
   environment:
     host: ${opt:host}
     pass: ${opt:pass}
@@ -28,6 +33,14 @@ functions:
       - http:
           path: /path/{slug+}
           method: get
+          cors: true
+  pagesGet:
+    handler: scripts/lambda/page.httpGETALL
+    events:
+      - http:
+          path: /path
+          method: get
+          cors: true
 
   pagePOST:
     handler: scripts/lambda/page.httpPOST
@@ -35,16 +48,27 @@ functions:
       - http:
           path: /page
           method: post
+          cors: true
           authorizer:
-            arn: ${self:custom.cognitoPool}
+            type: AWS_IAM
   pagePUT:
     handler: scripts/lambda/page.httpPUT
     events:
       - http:
           path: /page/{pageId}
           method: put
+          cors: true
           authorizer:
-            arn: ${self:custom.cognitoPool}
+            type: AWS_IAM
+  pageDELETE:
+    handler: scripts/lambda/page.httpDELETE
+    events:
+      - http:
+          path: /page/{pageId}
+          method: delete
+          cors: true
+          authorizer:
+            type: AWS_IAM
 
   noticePOST:
     handler: scripts/lambda/notice.httpPOST
@@ -52,13 +76,15 @@ functions:
       - http:
           path: /notice
           method: post
+          cors: true
           authorizer:
-            arn: ${self:custom.cognitoPool}
+            type: AWS_IAM
   noticePUT:
     handler: scripts/lambda/notice.httpPUT
     events:
       - http:
           path: /notice/{noticeId}
           method: put
+          cors: true
           authorizer:
-            arn: ${self:custom.cognitoPool}
+            type: AWS_IAM

@@ -13,6 +13,9 @@ function httpPOST(event, context) {
   if (!eventBody) {
     context.succeed({
       statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify({
         error: "POST body is required (noticeTitle, noticeDate, noticeLocation, noticeContent)"
       })
@@ -62,6 +65,9 @@ function httpPUT(event, context) {
   if (!noticeId || !eventBody) {
     context.succeed({
       statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify({
         error: "notice ID and body are required"
       })
