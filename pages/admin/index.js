@@ -1,7 +1,9 @@
-import Amplify, { API } from 'aws-amplify'
-import { withAuthenticator } from 'aws-amplify-react'
 import fetch from 'isomorphic-fetch'
 import { Component } from 'react'
+
+import Amplify, { API } from 'aws-amplify'
+import { withAuthenticator } from 'aws-amplify-react'
+
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
 import DeletePageForm from "../../components/AdminForms/DeletePageForm";
 
@@ -26,44 +28,6 @@ Amplify.configure({
   }
 })
 
-class PagesList extends Component {
-  state = {
-    pages: []
-  }
-
-  componentWillMount = async () => {
-    const pages = await (await fetch(`${ProdAPIEndpoint}/path`)).json()
-    this.setState({
-      pages
-    })
-  }
-
-  componentWillReceiveProps({ pages }) {
-    this.setState({
-      pages
-    })
-  }
-
-  handleDelete = (id) => () => {
-    API.del("ProdAPI", `/page/${id}`).then(async () => {
-      const pages = await (await fetch(`${ProdAPIEndpoint}/path`)).json()
-      this.setState({
-        pages
-      })
-    })
-  }
-
-  render() {
-    return (
-      <ul>
-        { this.state.pages && this.state.pages.length ? this.state.pages.map((p, i) => (
-          <li key={i}>{p.slug} : {p.label} <button onClick={this.handleDelete(p.id)}>X</button></li>
-        )) : null}
-      </ul>
-    )
-  }
-}
-
 class Admin extends Component {
   state = {
     pages: []
@@ -76,25 +40,30 @@ class Admin extends Component {
     })
   }
 
-  handleCreate = ({slug, label}) => {
-    API.post("ProdAPI", "/page", {
+  handleCreate = async ({ slug, label }) => {
+    await API.post("ProdAPI", "/page", {
       body: { slug, label }
-    }).then(async () => {
-      const pages = await (await fetch(`${ProdAPIEndpoint}/path`)).json()
-      this.setState({
+    })
+    this.getPages()
+  }
+
+  handleDelete = async (id) => {
+    await API.del("ProdAPI", `/page/${id}`)
+    this.getPages()
+  }
+
+  getPages = async () => {
+    const pages = await (await fetch(`${ProdAPIEndpoint}/path`)).json()
+    this.setState({
         pages
-      })
     })
   }
 
   render() {
     return (
       <div className="main">
-        <CreatePageForm handleSubmit={({slug, label}) => {
-          this.handleCreate({slug, label})
-        }} />
-        <PagesList pages={this.state.pages} />
-        <div />
+        <CreatePageForm handleSubmit={this.handleCreate} />
+        <DeletePageForm pages={this.state.pages} handleSubmit={this.handleDelete} />
       </div>
     )
   }

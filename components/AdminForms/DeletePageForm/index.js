@@ -2,27 +2,28 @@ import { Component } from 'react'
 
 export default class DeletePageForm extends Component {
   state = {
-    id: null,
-    slug: '',
-    label: ''
+    pages: [],
+    handleSubmit: () => {}
   }
 
-
-  static getInitialProps({ handleSubmit }) {
-    return { handleSubmit }
+  componentWillReceiveProps({ pages, handleSubmit }) {
+    this.setState({
+      pages,
+      handleSubmit
+    })
   }
 
-  handleDelete = (event) => {
-    this.props.handleSubmit(this.state)
-    event.preventDefault();
+  handleDelete = (id) => () => {
+    this.state.handleSubmit(id)
   }
-
 
   render() {
     return (
-      <li>
-        {this.state.slug} : {this.state.label} <button onClick={this.handleDelete}>X</button>
-      </li>
+      <ul>
+        { this.state.pages && this.state.pages.length ? this.state.pages.map((p, i) => (
+          <li key={i}>{p.slug} : {p.label} <button onClick={this.handleDelete(p.id)}>X</button></li>
+        )) : null}
+      </ul>
     )
   }
 }
