@@ -1,11 +1,15 @@
 import { Component } from 'react'
 import * as _find from 'lodash.find'
+import Menu from '../Menu'
 import News from '../News'
 import Section from '../Section'
+import Notice from '../Notice'
 
 const identifyingComponentFields = {
   newsHeadline: News,
-  content: Section
+  content: Section,
+  disclosure: Section,
+  noticeTitle: Notice
 }
 
 class Layout extends Component {
@@ -30,8 +34,11 @@ class Layout extends Component {
     const regions = this.props.regions || []
     return (
       <div className="main">
-        Regions:
-        {this.switchComponent(regions)}
+        <Menu />
+
+        <div className="main-content">
+          {this.switchComponent(regions)}
+        </div>
       </div>
     )
   }

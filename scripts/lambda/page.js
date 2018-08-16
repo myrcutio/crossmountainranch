@@ -30,9 +30,10 @@ LEFT JOIN content.sections on pcm.sectionId = content.sections.id
 LEFT JOIN content.committees on pcm.committeeId = content.committees.id
 LEFT JOIN content.documents on pcm.documentId = content.documents.id
 LEFT JOIN content.news on pcm.newsId = content.news.id
-LEFT JOIN content.notices on pcm.alertId = content.notices.id
+LEFT JOIN content.notices on pcm.noticeId = content.notices.id
 LEFT JOIN content.pages on pcm.pageId = content.pages.id
 WHERE content.pages.slug = ${JSON.stringify(slug)}
+ORDER BY pcm.orderWeight ASC
 `
 
   connection.query(pageQuery, function (error, res, fields) {

@@ -69,32 +69,30 @@ functions:
           cors: true
           authorizer:
             type: AWS_IAM
-
-  noticePOST:
-    handler: scripts/lambda/notice.httpPOST
+  contentGETALL:
+    handler: scripts/lambda/contentCRUD.httpGETTable
     events:
       - http:
-          path: /notice
-          method: post
+          path: /{table}
+          method: get
           cors: true
           authorizer:
             type: AWS_IAM
-  noticePUT:
-    handler: scripts/lambda/notice.httpPUT
-    events:
-      - http:
-          path: /notice/{noticeId}
-          method: put
-          cors: true
-          authorizer:
-            type: AWS_IAM
-
   contentPOST:
     handler: scripts/lambda/contentCRUD.httpPOST
     events:
       - http:
           path: /{table}
           method: post
+          cors: true
+          authorizer:
+            type: AWS_IAM
+  contentDELETE:
+    handler: scripts/lambda/contentCRUD.httpDELETE
+    events:
+      - http:
+          path: /{table}/{id}
+          method: delete
           cors: true
           authorizer:
             type: AWS_IAM

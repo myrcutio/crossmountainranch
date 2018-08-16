@@ -7,6 +7,7 @@ import { withAuthenticator } from 'aws-amplify-react'
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
 import ListPagesForm from "../../components/AdminForms/ListPagesForm";
 import Layout from "../../components/Layout";
+import ContentForm from "../../components/AdminForms/ContentForm";
 
 const ProdAPIEndpoint = "https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod"
 
@@ -31,9 +32,15 @@ Amplify.configure({
 
 class Admin extends Component {
   state = {
+    currentPage: 'homepage',
+    regions: {},
+    news: [],
+    sections: [],
     pages: [],
-    currentPage: '',
-    regions: {}
+    notices: [],
+    documents: [],
+    committees: [],
+    members: []
   }
 
   componentWillMount = async () => {
@@ -54,8 +61,12 @@ class Admin extends Component {
 
   getPages = async () => {
     const pages = await (await fetch(`${ProdAPIEndpoint}/path`)).json()
+    const data = await (await fetch(`${ProdAPIEndpoint}/path/${this.state.currentPage}`)).json()
     this.setState({
-        pages
+      pages,
+      regions: {
+        [this.state.currentPage]: data.regions
+      }
     })
   }
 
@@ -69,10 +80,8 @@ class Admin extends Component {
     })
   }
 
-  handleCreateSection = ({ title, content }) => async () => {
-    await API.post("ProdAPI", `/sections`, {
-      body: { title, content }
-    })
+  handleCreateSection = (body) => async () => {
+    await API.post("ProdAPI", `/sections`, body)
   }
 
   handleCreateNews = ({ newsHeadline, newsSubtitle, newsContent}) => async () => {
@@ -81,22 +90,73 @@ class Admin extends Component {
     })
   }
 
+  handleContentCreate = ({table, body}) => {
+    return API.post("ProdAPI", `/${table}`, {
+      body
+    })
+  }
+  handleContentUpdate = ({table, body, id}) => {
+    return API.put("ProdAPI", `/${table}/${id}`, {
+      body
+    })
+  }
+  handleContentDelete = ({table, id}) => {
+    return API.del("ProdAPI", `/${table}/${id}`)
+  }
+
+  handleGetTable = async ({table}) => {
+    const tableData = await API.get("ProdAPI", `/${table}`)
+
+    const data = await (await fetch(`${ProdAPIEndpoint}/path/${this.state.currentPage}`)).json()
+    this.setState({
+      [table]: tableData,
+      regions: {
+        [this.state.currentPage]: data.regions
+      }
+    })
+  }
+
   render() {
     return (
       <div>
-        <div className="main">
+        <div className="adminControls">
           <CreatePageForm handleSubmit={this.handleCreate} />
           <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} />
-          <button onClick={this.handleCreateSection({ title: "test title", content: "test contents!"})}>create section</button>
-
-          <button onClick={this.handleCreateNews({
-            newsHeadline: "extra extra!",
-            newsSubtitle: "read all about it",
-            newsContent: "dang"
-          })}>create news</button>
+          <ContentForm
+            table="news"
+            data={this.state.news}
+            handleGet={this.handleGetTable}
+            handleCreate={this.handleContentCreate}
+            handleDelete={this.handleContentDelete}
+            handleUpdate={this.handleContentUpdate}
+          />
+          <ContentForm
+            table="sections"
+            data={this.state.sections}
+            handleGet={this.handleGetTable}
+            handleCreate={this.handleContentCreate}
+            handleDelete={this.handleContentDelete}
+            handleUpdate={this.handleContentUpdate}
+          />
+          <ContentForm
+            table="notices"
+            data={this.state.notices}
+            handleGet={this.handleGetTable}
+            handleCreate={this.handleContentCreate}
+            handleDelete={this.handleContentDelete}
+            handleUpdate={this.handleContentUpdate}
+          />
+          <ContentForm
+            table="pageContentMaps"
+            data={this.state.pageContentMaps}
+            handleGet={this.handleGetTable}
+            handleCreate={this.handleContentCreate}
+            handleDelete={this.handleContentDelete}
+            handleUpdate={this.handleContentUpdate}
+          />
         </div>
         {
-          this.state.currentPage && this.state.regions[this.state.currentPage].length  ? <Layout regions={this.state.regions[this.state.currentPage]}/> : null
+          this.state.currentPage && this.state.regions[this.state.currentPage] && this.state.regions[this.state.currentPage].length  ? <Layout regions={this.state.regions[this.state.currentPage]}/> : null
         }
       </div>
     )

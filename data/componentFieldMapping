@@ -1,0 +1,30 @@
+export default {
+  sections: [
+    "title",
+    "subtitle",
+    "disclosure",
+    "content",
+    "orderWeight"
+  ],
+  news: [
+    "published",
+    "newsHeadline",
+    "newsSubtitle",
+    "newsContent"
+  ],
+  notices: [
+    "noticeTitle",
+    "noticeDate",
+    "noticeLocation",
+    "noticeContent"
+  ],
+  pageContentMaps: [
+    "pageId",
+    "sectionId",
+    "committeeId",
+    "documentId",
+    "newsId",
+    "noticeId",
+    "orderWeight"
+  ]
+}

@@ -15,14 +15,14 @@ CREATE TABLE `pageContentMaps` (
   `committeeId` INT,
   `documentId` INT,
   `newsId` INT,
-  `alertId` INT,
-  `orderWeight` INT,
+  `noticeId` INT,
+  `orderWeight` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `page` (`pageId` ASC),
   CONSTRAINT `sections` UNIQUE (`pageId`, `sectionId`),
   CONSTRAINT `committees` UNIQUE (`pageId`, `committeeId`),
   CONSTRAINT `newsArticles` UNIQUE (`pageId`, `newsId`),
-  CONSTRAINT `alerts` UNIQUE (`pageId`, `alertId`),
+  CONSTRAINT `notices` UNIQUE (`pageId`, `noticeId`),
   CONSTRAINT `documents` UNIQUE (`pageId`, `documentId`));
 
 CREATE TABLE `sections` (

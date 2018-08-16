@@ -20,8 +20,57 @@ const schemaMap = {
     "newsHeadline",
     "newsSubtitle",
     "newsContent"
+  ],
+  notices: [
+    "noticeTitle",
+    "noticeDate",
+    "noticeLocation",
+    "noticeContent"
+  ],
+  pageContentMaps: [
+    "pageId",
+    "sectionId",
+    "committeeId",
+    "documentId",
+    "newsId",
+    "noticeId",
+    "orderWeight"
   ]
 }
+
+function httpGETTable(event, context) {
+  const dbTable = _get(event, 'pathParameters.table', false)
+  if (!dbTable) {
+    context.succeed({
+      statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        error: "table is required"
+      })
+    })
+    return;
+  }
+
+  const tableGet = `
+    SELECT * FROM content.${dbTable}
+    `
+
+  connection.query(tableGet, function (error, res, fields) {
+    if (error) throw error;
+
+    let response = {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify(res),
+      statusCode: 200
+    }
+    context.succeed(response)
+  })
+}
+
 
 // Basic CRUD functions
 function httpPOST(event, context) {
@@ -111,6 +160,43 @@ function httpPUT(event, context) {
   })
 }
 
+function httpDELETE(event, context) {
+  const tableId = _get(event, 'pathParameters.id', false)
+  const dbTable = _get(event, 'pathParameters.table', false)
+
+  if (!tableId || !dbTable) {
+    context.succeed({
+      statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        error: "ID and Table are required"
+      })
+    })
+    return;
+  }
+
+  const tableDelete = `
+    DELETE FROM content.${dbTable} WHERE (id = '${tableId}');
+  `
+
+  connection.query(tableDelete, function (error, res, fields) {
+    if (error) throw error;
+
+    let response = {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify(res),
+      statusCode: 200
+    }
+    context.succeed(response)
+  })
+}
+
+exports.httpGETTable = httpGETTable
 exports.httpPOST = httpPOST
 exports.httpPUT = httpPUT
+exports.httpDELETE = httpDELETE
 
