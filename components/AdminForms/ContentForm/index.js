@@ -34,13 +34,13 @@ export default class ContentForm extends Component {
   }
 
   handleCreate = async () => {
-    await this.state.handleCreate({table: this.state.table, body: this.state.componentData})
-    this.state.handleGet({table: this.state.table})
+    await this.state.handleCreate({table: this.props.table, body: this.state.componentData})
+    this.state.handleGet({table: this.props.table})
   }
 
   handleDelete = (id) => async () => {
-    await this.state.handleDelete({table: this.state.table, id})
-    this.state.handleGet({table: this.state.table})
+    await this.state.handleDelete({table: this.props.table, id})
+    this.state.handleGet({table: this.props.table})
   }
 
   handlePopulate = (table) => () => {
@@ -50,20 +50,19 @@ export default class ContentForm extends Component {
   render() {
     return (
       <ul>
-        <button onClick={this.handlePopulate(this.state.table)}>Populate {this.state.table}</button>
-        { this.state.data && this.state.data.length ? this.state.data.map((c, i) => (
+        { this.props.data && this.props.data.length ? this.props.data.map((c, i) => (
           <li key={i}>
             <div>ID: {c.id}</div>
             {
-              componentMappings[this.state.table] ? componentMappings[this.state.table].map((mapping, ind) => {
+              componentMappings[this.props.table] ? componentMappings[this.props.table].map((mapping, ind) => {
                 return c[mapping] ? <div key={ind}>{mapping}: {c[mapping]}</div> : null
               }) : null
             }
-            <button onClick={this.handleDelete(c.id)}>X</button>
+            <button onClick={this.handleDelete(c.id)}>Delete</button>
           </li>
         )) : null}
         {
-          componentMappings[this.state.table] ? componentMappings[this.state.table].map((mapping, ind) => {
+          componentMappings[this.props.table] ? componentMappings[this.props.table].map((mapping, ind) => {
             return (
               <div key={ind}>
                 {mapping}: <input name={mapping} onChange={this.handleOnChange(mapping)} />
@@ -71,7 +70,7 @@ export default class ContentForm extends Component {
             )
           }) : null
         }
-        <button onClick={this.handleCreate}>Add to {this.state.table}</button>
+        <button onClick={this.handleCreate}>Add to {this.props.table}</button>
       </ul>
     )
   }

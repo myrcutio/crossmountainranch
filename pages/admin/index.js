@@ -147,6 +147,14 @@ class Admin extends Component {
             handleUpdate={this.handleContentUpdate}
           />
           <ContentForm
+            table="documents"
+            data={this.state.documents}
+            handleGet={this.handleGetTable}
+            handleCreate={this.handleContentCreate}
+            handleDelete={this.handleContentDelete}
+            handleUpdate={this.handleContentUpdate}
+          />
+          <ContentForm
             table="pageContentMaps"
             data={this.state.pageContentMaps}
             handleGet={this.handleGetTable}
@@ -156,7 +164,19 @@ class Admin extends Component {
           />
         </div>
         {
-          this.state.currentPage && this.state.regions[this.state.currentPage] && this.state.regions[this.state.currentPage].length  ? <Layout regions={this.state.regions[this.state.currentPage]}/> : null
+          this.state.currentPage &&
+          this.state.regions[this.state.currentPage] &&
+          this.state.regions[this.state.currentPage].length ?
+            <Layout
+              handlers={{
+                create: this.handleContentCreate,
+                update: this.handleContentUpdate,
+                del: this.handleContentDelete
+              }}
+              adminMode="true"
+              regions={this.state.regions[this.state.currentPage]}
+            />
+          : null
         }
       </div>
     )

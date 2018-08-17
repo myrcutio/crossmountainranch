@@ -8,7 +8,12 @@ const connection = mysql.createConnection({
 })
 
 // Basic CRUD functions
-function httpGET(event, context) {
+function httpGET(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+    return callback(null, 'Lambda is warm!')
+  }
+
   let slug, pages
   if (event && event.pathParameters && event.pathParameters.slug) {
     slug = event.pathParameters.slug
@@ -53,10 +58,15 @@ ORDER BY pcm.orderWeight ASC
   })
 }
 
-function httpGETALL(event, context) {
+function httpGETALL(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+    return callback(null, 'Lambda is warm!')
+  }
+
   const pageQuery = `
-SELECT * from content.pages
-`
+    SELECT * from content.pages
+  `
 
   connection.query(pageQuery, function (error, res, fields) {
     if (error) throw error;
@@ -72,7 +82,12 @@ SELECT * from content.pages
   })
 }
 
-function httpDELETE(event, context) {
+function httpDELETE(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+    return callback(null, 'Lambda is warm!')
+  }
+
   let pageId
   if (event && event.pathParameters && event.pathParameters.pageId) {
     pageId = event.pathParameters.pageId
@@ -106,7 +121,12 @@ function httpDELETE(event, context) {
   })
 }
 
-function httpPOST(event, context) {
+function httpPOST(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+    return callback(null, 'Lambda is warm!')
+  }
+
   const eventBody = JSON.parse(_get(event, 'body', '{}'))
   console.log(eventBody)
   if (!eventBody) {
@@ -155,7 +175,12 @@ function httpPOST(event, context) {
   })
 }
 
-function httpPUT(event, context) {
+function httpPUT(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+    return callback(null, 'Lambda is warm!')
+  }
+
   const pageId = _get(event, 'pathParameters.pageId', false)
   const eventBody = _get(event, 'body', false)
   if (!pageId || !eventBody) {

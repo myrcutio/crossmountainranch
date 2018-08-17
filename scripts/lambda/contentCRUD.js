@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const _get = require('lodash.get')
+const dataSchema = require('../../data/componentFieldMapping')
 const connection = mysql.createConnection({
   host     : process.env.host,
   user     : process.env.user,
@@ -7,38 +8,14 @@ const connection = mysql.createConnection({
   database : 'content'
 })
 
-const schemaMap = {
-  sections: [
-    "title",
-    "subtitle",
-    "disclosure",
-    "content",
-    "orderWeight"
-  ],
-  news: [
-    "published",
-    "newsHeadline",
-    "newsSubtitle",
-    "newsContent"
-  ],
-  notices: [
-    "noticeTitle",
-    "noticeDate",
-    "noticeLocation",
-    "noticeContent"
-  ],
-  pageContentMaps: [
-    "pageId",
-    "sectionId",
-    "committeeId",
-    "documentId",
-    "newsId",
-    "noticeId",
-    "orderWeight"
-  ]
-}
+const schemaMap = dataSchema
 
-function httpGETTable(event, context) {
+function httpGETTable(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+      return callback(null, 'Lambda is warm!')
+  }
+
   const dbTable = _get(event, 'pathParameters.table', false)
   if (!dbTable) {
     context.succeed({
@@ -73,7 +50,12 @@ function httpGETTable(event, context) {
 
 
 // Basic CRUD functions
-function httpPOST(event, context) {
+function httpPOST(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+      return callback(null, 'Lambda is warm!')
+  }
+
   const eventBody = JSON.parse(_get(event, 'body', '{}'))
   const dbTable = _get(event, 'pathParameters.table', false)
   if (!eventBody || !dbTable) {
@@ -118,7 +100,12 @@ function httpPOST(event, context) {
   })
 }
 
-function httpPUT(event, context) {
+function httpPUT(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+      return callback(null, 'Lambda is warm!')
+  }
+
   const tableId = _get(event, 'pathParameters.id', false)
   const dbTable = _get(event, 'pathParameters.table', false)
   const eventBody = JSON.parse(_get(event, 'body', '{}'))
@@ -160,7 +147,12 @@ function httpPUT(event, context) {
   })
 }
 
-function httpDELETE(event, context) {
+function httpDELETE(event, context, callback) {
+  /** Immediate response for WarmUP plugin */
+  if (event.source === 'serverless-plugin-warmup') {
+      return callback(null, 'Lambda is warm!')
+  }
+
   const tableId = _get(event, 'pathParameters.id', false)
   const dbTable = _get(event, 'pathParameters.table', false)
 

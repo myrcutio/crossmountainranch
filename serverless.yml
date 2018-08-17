@@ -3,12 +3,17 @@ service: cmr-cms
 frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
-  - serverless-plugin-include-dependencies
+  - serverless-plugin-inject-dependencies
+  - serverless-plugin-warmup
+
 package:
   individually: true
 
 custom:
   cognitoPool: ${opt:cognitopool}
+  warmup:
+    prewarm: true
+    schedule: 'rate(14 minutes)'
 
 provider:
   name: aws
@@ -29,6 +34,7 @@ provider:
 functions:
   pageGet:
     handler: scripts/lambda/page.httpGET
+    warmup: true
     events:
       - http:
           path: /path/{slug+}
@@ -36,6 +42,7 @@ functions:
           cors: true
   pagesGet:
     handler: scripts/lambda/page.httpGETALL
+    warmup: true
     events:
       - http:
           path: /path
@@ -44,6 +51,7 @@ functions:
 
   pagePOST:
     handler: scripts/lambda/page.httpPOST
+    warmup: true
     events:
       - http:
           path: /page
@@ -53,6 +61,7 @@ functions:
             type: AWS_IAM
   pagePUT:
     handler: scripts/lambda/page.httpPUT
+    warmup: true
     events:
       - http:
           path: /page/{pageId}
@@ -62,6 +71,7 @@ functions:
             type: AWS_IAM
   pageDELETE:
     handler: scripts/lambda/page.httpDELETE
+    warmup: true
     events:
       - http:
           path: /page/{pageId}
@@ -71,6 +81,7 @@ functions:
             type: AWS_IAM
   contentGETALL:
     handler: scripts/lambda/contentCRUD.httpGETTable
+    warmup: true
     events:
       - http:
           path: /{table}
@@ -80,6 +91,7 @@ functions:
             type: AWS_IAM
   contentPOST:
     handler: scripts/lambda/contentCRUD.httpPOST
+    warmup: true
     events:
       - http:
           path: /{table}
@@ -89,6 +101,7 @@ functions:
             type: AWS_IAM
   contentDELETE:
     handler: scripts/lambda/contentCRUD.httpDELETE
+    warmup: true
     events:
       - http:
           path: /{table}/{id}
@@ -98,6 +111,7 @@ functions:
             type: AWS_IAM
   contentPUT:
     handler: scripts/lambda/contentCRUD.httpPUT
+    warmup: true
     events:
       - http:
           path: /{table}/{id}
