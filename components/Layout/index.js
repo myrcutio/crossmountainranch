@@ -4,6 +4,7 @@ import Menu from '../Menu'
 import News from '../News'
 import Section from '../Section'
 import Notice from '../Notice'
+import Document from '../Document'
 import ModalWithHandlers from "../AdminForms/ModalWithHandlers";
 
 const identifyingComponentFields = {
@@ -22,21 +23,21 @@ const identifyingComponentFields = {
   noticeTitle: {
     table: 'notices',
     component: Notice
+  },
+  docUrl: {
+    table: 'documents',
+    component: Document
   }
 }
 
 class Layout extends Component {
   state = {
     adminMode: false,
-    handlers: {}
   }
   constructor(props) {
     super(props)
     if (props.adminMode) {
       this.state.adminMode = props.adminMode
-    }
-    if (props.handlers) {
-      this.state.handlers = props.handlers
     }
   }
 
@@ -68,7 +69,15 @@ class Layout extends Component {
 
       if (this.state.adminMode) {
         return (
-          <ModalWithHandlers key={i} table={identifiedRegion.table} data={region} handlers={this.state.handlers}>
+          <ModalWithHandlers
+            key={i}
+            table={identifiedRegion.table}
+            data={region}
+            handleUpdate={this.props.handleUpdate}
+            handleCreate={this.props.handleCreate}
+            handleDelete={this.props.handleDelete}
+            handleGet={this.props.handleGet}
+          >
             <RegionComponent data={region} />
           </ModalWithHandlers>
         )

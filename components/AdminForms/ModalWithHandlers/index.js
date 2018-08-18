@@ -19,16 +19,10 @@ Modal.setAppElement('#__next')
 class ModalWithHandlers extends Component {
   state = {
     modalIsOpen: false,
-    handlers: {
-      create: () => {},
-      update: () => {},
-      del: () => {}
-    }
   }
 
   constructor(props) {
     super(props)
-    this.state.handlers = props.handlers
 
     this.openModal = this.openModal.bind(this)
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -64,10 +58,12 @@ class ModalWithHandlers extends Component {
           <button onClick={this.closeModal}>X</button>
           <ContentForm
             table={this.props.table}
-            data={[this.props.data]}
-            handleCreate={this.state.handlers.create}
-            handleDelete={this.state.handlers.del}
-            handleUpdate={this.state.handlers.update}
+            componentData={this.props.data}
+            handleUpdate={this.props.handleUpdate}
+            handleCreate={this.props.handleCreate}
+            handleDelete={this.props.handleDelete}
+            handleGet={this.props.handleGet}
+            callback={this.closeModal}
           />
         </Modal>
         {this.props.children}

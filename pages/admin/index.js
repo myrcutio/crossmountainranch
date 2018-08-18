@@ -5,9 +5,9 @@ import Amplify, { API } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react'
 
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
-import ListPagesForm from "../../components/AdminForms/ListPagesForm";
-import Layout from "../../components/Layout";
-import ContentForm from "../../components/AdminForms/ContentForm";
+import ListPagesForm from "../../components/AdminForms/ListPagesForm"
+import Layout from "../../components/Layout"
+import ModalWithHandlers from '../../components/AdminForms/ModalWithHandlers'
 
 const ProdAPIEndpoint = "https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod"
 
@@ -71,7 +71,7 @@ class Admin extends Component {
   }
 
   handleGetPage = async (slug) => {
-    const data = await (await fetch(`${ProdAPIEndpoint}/path/${slug}`)).json()
+    const data = await (await fetch(`${ProdAPIEndpoint}/path/${slug || this.state.currentPage}`)).json()
     this.setState({
       regions: {
         [slug]: data.regions
@@ -122,57 +122,34 @@ class Admin extends Component {
         <div className="adminControls">
           <CreatePageForm handleSubmit={this.handleCreate} />
           <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} />
-          <ContentForm
-            table="news"
-            data={this.state.news}
-            handleGet={this.handleGetTable}
+          <ModalWithHandlers
+            table='documents'
+            handleUpdate={this.handleContentUpdate}
             handleCreate={this.handleContentCreate}
             handleDelete={this.handleContentDelete}
-            handleUpdate={this.handleContentUpdate}
-          />
-          <ContentForm
-            table="sections"
-            data={this.state.sections}
             handleGet={this.handleGetTable}
+          >
+            <span>Create Document</span>
+          </ModalWithHandlers>
+          <ModalWithHandlers
+            table='pageContentMaps'
+            handleUpdate={this.handleContentUpdate}
             handleCreate={this.handleContentCreate}
             handleDelete={this.handleContentDelete}
-            handleUpdate={this.handleContentUpdate}
-          />
-          <ContentForm
-            table="notices"
-            data={this.state.notices}
             handleGet={this.handleGetTable}
-            handleCreate={this.handleContentCreate}
-            handleDelete={this.handleContentDelete}
-            handleUpdate={this.handleContentUpdate}
-          />
-          <ContentForm
-            table="documents"
-            data={this.state.documents}
-            handleGet={this.handleGetTable}
-            handleCreate={this.handleContentCreate}
-            handleDelete={this.handleContentDelete}
-            handleUpdate={this.handleContentUpdate}
-          />
-          <ContentForm
-            table="pageContentMaps"
-            data={this.state.pageContentMaps}
-            handleGet={this.handleGetTable}
-            handleCreate={this.handleContentCreate}
-            handleDelete={this.handleContentDelete}
-            handleUpdate={this.handleContentUpdate}
-          />
+          >
+            <span>Add Document To Page</span>
+          </ModalWithHandlers>
         </div>
         {
           this.state.currentPage &&
           this.state.regions[this.state.currentPage] &&
           this.state.regions[this.state.currentPage].length ?
             <Layout
-              handlers={{
-                create: this.handleContentCreate,
-                update: this.handleContentUpdate,
-                del: this.handleContentDelete
-              }}
+              handleUpdate={this.handleContentUpdate}
+              handleCreate={this.handleContentCreate}
+              handleDelete={this.handleContentDelete}
+              handleGet={this.handleGetTable}
               adminMode="true"
               regions={this.state.regions[this.state.currentPage]}
             />

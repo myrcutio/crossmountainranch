@@ -126,10 +126,9 @@ function httpPUT(event, context, callback) {
 
   const tableUpdate = `
     UPDATE content.${dbTable}
-    ${fields.map(field => `SET ${field} = "${eventBody[field]}"`).join(" \n")}
+    SET ${fields.map(field => `${field} = "${eventBody[field]}"`).join(", ") + "\n"}
     WHERE (id = ${tableId});
   `
-
 
   connection.query(tableUpdate, function (error, res, fields) {
     if (error) throw error;

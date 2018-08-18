@@ -1,30 +1,11 @@
-import Menu from '../../components/Menu'
-
-import contentModel from '../../static/data/content.js'
+import Layout from '../../components/Layout'
 
 const Documents = ({ contentModel }) => (
-  <div className="main">
-    <Menu />
-
-    <div className="main-content">
-      {contentModel.documents.map((section, i) => (
-        <div key={i}>
-          <h2>{section.section}</h2>
-          <ul>
-            {section.docs.map((document, x) => (
-              <li key={x}>
-                <a href={document.url}>{document.label}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
-  </div>
+  <Layout regions={contentModel.regions} />
 )
 
 Documents.getInitialProps = async () => {
-  // const contentModel = await (await fetch('https://www.crossmountainranch.org/data/content.json')).json()
+  const contentModel = await (await fetch('https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod/path/documents')).json()
   return { contentModel }
 }
 
