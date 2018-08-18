@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const _get = require('lodash.get')
 const dataSchema = require('../../data/componentFieldMapping')
+const tableIds = require('../../data/tableIdMapping')
 const connection = mysql.createConnection({
   host     : process.env.host,
   user     : process.env.user,
@@ -169,8 +170,13 @@ function httpDELETE(event, context, callback) {
   }
 
   const tableDelete = `
-    DELETE FROM content.${dbTable} WHERE (id = '${tableId}');
+    SET SQL_SAFE_UPDATES = 0;
+    DELETE FROM content.${dbTable} WHERE id = ${tableId};
+    ${dbTable !== 'pageContentMaps' ? `DELETE FROM content.pageContentMaps WHERE ${tableIds[dbTable]} = ${tableId};` : ''}
+    SET SQL_SAFE_UPDATES = 1;
   `
+
+  // TODO if deleting from the documents table, also delete the file from s3
 
   connection.query(tableDelete, function (error, res, fields) {
     if (error) throw error;

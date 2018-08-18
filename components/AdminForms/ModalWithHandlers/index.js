@@ -63,6 +63,7 @@ class ModalWithHandlers extends Component {
             handleCreate={this.props.handleCreate}
             handleDelete={this.props.handleDelete}
             handleGet={this.props.handleGet}
+            storage={this.props.storage}
             callback={this.closeModal}
           />
         </Modal>

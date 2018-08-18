@@ -13,7 +13,7 @@ custom:
   cognitoPool: ${opt:cognitopool}
   warmup:
     prewarm: true
-    schedule: 'rate(14 minutes)'
+    schedule: 'rate(10 minutes)'
 
 provider:
   name: aws
@@ -119,3 +119,21 @@ functions:
           cors: true
           authorizer:
             type: AWS_IAM
+resources:
+  Resources:
+    S3BucketUploads:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-${self:provider.stage}-uploads
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - HEAD
+                - GET
+                - POST
+                - PUT
+                - DELETE
+              AllowedOrigins:
+                - "*"

@@ -11,6 +11,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "aws-amplify": "^1.0.6",
+    "aws-amplify-react": "^1.0.6",
     "isomorphic-fetch": "^2.2.1",
     "lodash.find": "^4.6.0",
     "lodash.get": "^4.4.2",
@@ -21,16 +23,14 @@
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-modal": "^3.5.1",
-    "react-protected-mailto": "^1.0.3",
-    "serverless-plugin-warmup": "^3.6.2-rc.1"
+    "react-protected-mailto": "^1.0.3"
   },
   "devDependencies": {
     "@zeit/next-sass": "^0.2.0",
-    "aws-amplify": "^1.0.5",
-    "aws-amplify-react": "^1.0.5",
     "node-sass": "^4.9.3",
     "serverless": "^1.30.0",
     "serverless-plugin-include-dependencies": "^3.1.1",
-    "serverless-plugin-inject-dependencies": "0.0.5"
+    "serverless-plugin-inject-dependencies": "0.0.5",
+    "serverless-plugin-warmup": "^3.6.2-rc.1"
   }
 }

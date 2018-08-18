@@ -5,7 +5,8 @@ import News from '../News'
 import Section from '../Section'
 import Notice from '../Notice'
 import Document from '../Document'
-import ModalWithHandlers from "../AdminForms/ModalWithHandlers";
+import ModalWithHandlers from "../AdminForms/ModalWithHandlers"
+import _orderBy from "lodash.orderby"
 
 const identifyingComponentFields = {
   newsHeadline: {
@@ -60,7 +61,28 @@ class Layout extends Component {
       if (identifiedRegion.table == 'news' && !newsRendered) {
         newsRendered = true
         return (
-          <RegionComponent key={i} data={newsArray} />
+          <div className="news-feed">
+            <h2>News & Events</h2>
+
+            { _orderBy(newsArray, ['published'], ['asc']).map((news, i) => {
+              return this.state.adminMode
+                ? <ModalWithHandlers
+                  key={i}
+                  table={identifiedRegion.table}
+                  data={region}
+                  handleUpdate={this.props.handleUpdate}
+                  handleCreate={this.props.handleCreate}
+                  handleDelete={this.props.handleDelete}
+                  handleGet={this.props.handleGet}
+                >
+                  <RegionComponent data={news} />
+                </ModalWithHandlers>
+                : (
+                <RegionComponent key={i} data={news} />
+              )
+            })}
+          </div>
+
         )
       } else if (identifiedRegion.table == 'news') {
         // wow

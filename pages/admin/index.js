@@ -1,34 +1,17 @@
 import fetch from 'isomorphic-fetch'
 import { Component } from 'react'
 
-import Amplify, { API } from 'aws-amplify'
+import Amplify, { API, Storage } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react'
 
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
 import ListPagesForm from "../../components/AdminForms/ListPagesForm"
 import Layout from "../../components/Layout"
 import ModalWithHandlers from '../../components/AdminForms/ModalWithHandlers'
+import { prodApiEndpoint } from '../../data/aws-exports'
+import { amplifyConfig } from '../../data/aws-exports'
 
-const ProdAPIEndpoint = "https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod"
-
-Amplify.configure({
-  Auth: {
-    userPoolId: "us-west-2_EZct9F6QU",
-    identityPoolId: "us-west-2:aeb43f0c-11cc-4ef7-851e-8b660d8afc8e",
-    region: "us-west-2",
-    userPoolWebClientId: "7hfaoesu22u2daj97l4ugs6pdg"
-  },
-  API: {
-    endpoints: [
-      {
-        name: "ProdAPI",
-        endpoint: ProdAPIEndpoint,
-        region: "us-west-2",
-        service: "execute-api"
-      }
-    ]
-  }
-})
+Amplify.configure(amplifyConfig)
 
 class Admin extends Component {
   state = {
@@ -60,8 +43,8 @@ class Admin extends Component {
   }
 
   getPages = async () => {
-    const pages = await (await fetch(`${ProdAPIEndpoint}/path`)).json()
-    const data = await (await fetch(`${ProdAPIEndpoint}/path/${this.state.currentPage}`)).json()
+    const pages = await (await fetch(`${prodApiEndpoint}/path`)).json()
+    const data = await (await fetch(`${prodApiEndpoint}/path/${this.state.currentPage}`)).json()
     this.setState({
       pages,
       regions: {
@@ -71,7 +54,7 @@ class Admin extends Component {
   }
 
   handleGetPage = async (slug) => {
-    const data = await (await fetch(`${ProdAPIEndpoint}/path/${slug || this.state.currentPage}`)).json()
+    const data = await (await fetch(`${prodApiEndpoint}/path/${slug || this.state.currentPage}`)).json()
     this.setState({
       regions: {
         [slug]: data.regions
@@ -107,7 +90,7 @@ class Admin extends Component {
   handleGetTable = async ({table}) => {
     const tableData = await API.get("ProdAPI", `/${table}`)
 
-    const data = await (await fetch(`${ProdAPIEndpoint}/path/${this.state.currentPage}`)).json()
+    const data = await (await fetch(`${prodApiEndpoint}/path/${this.state.currentPage}`)).json()
     this.setState({
       [table]: tableData,
       regions: {
@@ -128,6 +111,7 @@ class Admin extends Component {
             handleCreate={this.handleContentCreate}
             handleDelete={this.handleContentDelete}
             handleGet={this.handleGetTable}
+            storage={Storage}
           >
             <span>Create Document</span>
           </ModalWithHandlers>

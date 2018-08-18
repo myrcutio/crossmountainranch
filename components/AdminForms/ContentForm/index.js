@@ -2,13 +2,9 @@ import { Component } from 'react'
 import _get from 'lodash.get'
 
 import componentMappings from '../../../data/componentFieldMapping'
-const tableIds = {
-  sections: 'sectionId',
-  news: 'newsId',
-  documents: 'documentId',
-  notices: 'noticeId',
-  pageContentMaps: 'pageId'
-}
+import S3ImageUpload from "../S3UploadForm"
+import { s3FileEndpoint }from '../../../data/aws-exports'
+import tableIds from '../../../data/tableIdMapping'
 
 export default class ContentForm extends Component {
   state = {
@@ -79,17 +75,38 @@ export default class ContentForm extends Component {
     this.state.handleGet({table})
   }
 
+  handleUploadFile = (result) => {
+    if (result.key) {
+      this.setState({
+        componentData: {
+          ...this.state.componentData,
+          docUrl: `${s3FileEndpoint}${result.key}`
+        }
+      })
+    }
+  }
+
   render() {
     return (
       <ul>
         {
-          _get(this.props.componentData, 'id') ? <button onClick={this.handleDelete(this.props.componentData.id)}>Delete</button> : null
+          _get(this.props.componentData, tableIds[this.props.table]) ? <button onClick={this.handleDelete(_get(this.props.componentData, tableIds[this.props.table]))}>Delete</button> : null
         }
         {
           componentMappings[this.props.table] ? componentMappings[this.props.table].map((mapping, ind) => {
             return (
               <div key={ind}>
-                {mapping}: <input name={mapping} value={_get(this.state.componentData, mapping, null)} onChange={this.handleOnChange(mapping)} />
+                {
+                  this.props.table === 'documents' && mapping === 'docUrl' ? <S3ImageUpload storage={this.props.storage} callback={this.handleUploadFile}/>
+                    : <div>
+                        {mapping}:
+                          <input
+                            name={mapping}
+                            value={_get(this.state.componentData, mapping, null)}
+                            onChange={this.handleOnChange(mapping)}
+                          />
+                      </div>
+                }
               </div>
             )
           }) : null
