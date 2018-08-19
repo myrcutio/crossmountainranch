@@ -6,6 +6,11 @@ export default({ data }) => {
           {data.title}
         </h2>
       ): null}
+      { data.subtitle ? (
+        <h4 className="subtitle">
+          {data.subtitle}
+        </h4>
+      ): null}
       { data.content ? (
         <p className="description">
           {data.content}

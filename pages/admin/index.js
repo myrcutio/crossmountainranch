@@ -2,7 +2,13 @@ import fetch from 'isomorphic-fetch'
 import { Component } from 'react'
 
 import Amplify, { API, Storage } from 'aws-amplify'
-import { withAuthenticator } from 'aws-amplify-react'
+import {
+  Greetings,
+  SignIn,
+  ConfirmSignIn,
+  VerifyContact,
+  ForgotPassword,
+  withAuthenticator } from 'aws-amplify-react'
 import _get from 'lodash.get'
 
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
@@ -98,7 +104,8 @@ class Admin extends Component {
       [table]: tableData,
       regions: {
         [this.state.currentPage]: data.regions
-      }
+      },
+      pageId: _get(data, 'regions[0].pageId')
     })
   }
 
@@ -123,11 +130,18 @@ class Admin extends Component {
               regions={this.state.regions[this.state.currentPage]}
               pageId={this.state.pageId}
             />
-          : null
+            : null
         }
       </div>
     )
   }
 }
 
-export default withAuthenticator(Admin, true)
+
+export default withAuthenticator(Admin, true, [
+  <Greetings />,
+  <SignIn />,
+  <ConfirmSignIn />,
+  <VerifyContact />,
+  <ForgotPassword />
+])

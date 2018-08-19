@@ -7,6 +7,7 @@ import Notice from '../Notice'
 import Document from '../Document'
 import ModalWithHandlers from "../AdminForms/ModalWithHandlers"
 import _orderBy from "lodash.orderby"
+import _get from 'lodash.get'
 
 const identifyingComponentFields = {
   newsHeadline: {
@@ -26,6 +27,18 @@ const identifyingComponentFields = {
     component: Section
   },
   noticeTitle: {
+    table: 'notices',
+    component: Notice
+  },
+  noticeContent: {
+    table: 'notices',
+    component: Notice
+  },
+  noticeLocation: {
+    table: 'notices',
+    component: Notice
+  },
+  noticeDate: {
     table: 'notices',
     component: Notice
   },
@@ -81,21 +94,17 @@ class Layout extends Component {
             { _orderBy(newsArray, ['published'], ['asc']).map((news, ni) => {
               return this.state.adminMode
                 ? <ModalWithHandlers
-                  key={ni}
+                  {...this.props}
+                  key={`news-${ni}`}
                   table={identifiedRegion.table}
                   data={region}
-                  handleUpdate={this.props.handleUpdate}
-                  handleCreate={this.props.handleCreate}
-                  handleDelete={this.props.handleDelete}
-                  handleGet={this.props.handleGet}
                   pageId={this.state.pageId}
-                  storage={this.props.storage}
-                  orderId={i+ni+1}
+                  orderId={_get(newsArray, `[${newsArray.length -1}].orderWeight`, 0) + 1}
                 >
                   <RegionComponent data={news} />
                 </ModalWithHandlers>
                 : (
-                <RegionComponent key={i+ni+1} data={news} />
+                <RegionComponent key={`news-${ni}`} data={news} />
               )
             })}
           </div>
@@ -111,27 +120,18 @@ class Layout extends Component {
           return (
             <div className="firstRegion" key={i}>
               <ModalWithHandlers
-                handleUpdate={this.props.handleUpdate}
-                handleCreate={this.props.handleCreate}
-                handleDelete={this.props.handleDelete}
-                handleGet={this.props.handleGet}
+                {...this.props}
                 pageId={this.state.pageId}
-                storage={this.props.storage}
-                orderId={i}
+                orderId={0}
               >
                 <div />
               </ModalWithHandlers>
               <ModalWithHandlers
-                key={i}
+                {...this.props}
                 table={identifiedRegion.table}
                 data={region}
-                handleUpdate={this.props.handleUpdate}
-                handleCreate={this.props.handleCreate}
-                handleDelete={this.props.handleDelete}
-                handleGet={this.props.handleGet}
                 pageId={this.state.pageId}
-                storage={this.props.storage}
-                orderId={i+newsArray.length}
+                orderId={_get(region, 'orderWeight') + 1}
               >
                 <RegionComponent data={region} />
               </ModalWithHandlers>
@@ -140,16 +140,12 @@ class Layout extends Component {
         }
         return (
           <ModalWithHandlers
+            {...this.props}
             key={i}
             table={identifiedRegion.table}
             data={region}
-            handleUpdate={this.props.handleUpdate}
-            handleCreate={this.props.handleCreate}
-            handleDelete={this.props.handleDelete}
-            handleGet={this.props.handleGet}
             pageId={this.state.pageId}
-            storage={this.props.storage}
-            orderId={i+newsArray.length}
+            orderId={_get(region, 'orderWeight') + 1}
           >
             <RegionComponent data={region} />
           </ModalWithHandlers>

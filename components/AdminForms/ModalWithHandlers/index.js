@@ -49,19 +49,11 @@ class ModalWithHandlers extends Component {
           style={customStyles}
           contentLabel="Edit Region Contents"
         >
-
           <h2 ref={subtitle => this.subtitle = subtitle}></h2>
           <button onClick={this.closeEditModal}>X</button>
           <ContentForm
-            pageId={this.props.pageId}
-            orderId={this.props.orderId}
-            table={this.props.table}
-            componentData={this.props.data}
-            handleUpdate={this.props.handleUpdate}
-            handleCreate={this.props.handleCreate}
-            handleDelete={this.props.handleDelete}
-            handleGet={this.props.handleGet}
-            storage={this.props.storage}
+            {...this.props}
+
             callback={this.closeEditModal}
           />
         </Modal>
@@ -74,11 +66,9 @@ class ModalWithHandlers extends Component {
           <h2 ref={subtitle => this.subtitle = subtitle}></h2>
           <button onClick={this.closeCreateModal}>X</button>
           <ContentForm
-            pageId={this.props.pageId}
-            orderId={this.props.orderId}
-            handleCreate={this.props.handleCreate}
-            handleGet={this.props.handleGet}
-            storage={this.props.storage}
+            {...this.props}
+            data={null}
+            table={null}
             callback={this.closeCreateModal}
           />
         </Modal>

@@ -76,17 +76,14 @@ function httpPOST(event, context, callback) {
 
   const fields = schemaMap[dbTable].filter(f => eventBody[f])
 
+  const tableOrderUpdate = `
+    CALL bump_order_if_duplicate(${eventBody.orderWeight},${eventBody.pageId});
+  `
   const tableInsert = `
     INSERT INTO content.${dbTable}
     ( ${fields.join(',')})
     VALUES
     ( ${fields.map(field => `"${eventBody[field]}"`).join(',')} );
-  `
-  const tableOrderUpdate = `
-    UPDATE content.pageContentMaps 
-    SET orderWeight = orderWeight + 1 
-    WHERE pageId = ${eventBody.pageId}
-    AND orderWeight >= ${eventBody.orderWeight};
   `
 
   const insertQuery = () => connection.query(tableInsert, function (error, res, fields) {
