@@ -23,6 +23,7 @@ export default class ContentForm extends Component {
     this.state.handleCreate = this.props.handleCreate
     this.state.handleDelete = this.props.handleDelete
     this.state.handleGet = this.props.handleGet
+    this.state.table = this.props.table
 
     this.state.componentData = _get(this.props, 'componentData', {})
   }
@@ -48,31 +49,38 @@ export default class ContentForm extends Component {
   }
 
   handleCreate = async () => {
-    await this.state.handleCreate({table: this.props.table, body: this.state.componentData})
-    this.state.handleGet({table: this.props.table})
+    const createId = _get(await this.state.handleCreate({table: this.state.table, body: this.state.componentData}), 'message.insertId')
+    if (createId && this.props.pageId) {
+      const pageAssociationParams = {
+        table: 'pageContentMaps',
+        body: {
+          pageId: this.props.pageId,
+          [tableIds[this.state.table]]: createId,
+          orderWeight: this.props.orderId
+        }
+      }
+      await this.state.handleCreate(pageAssociationParams)
+    }
+    this.state.handleGet({table: this.state.table})
     if (typeof this.props.callback === 'function') {
       this.props.callback()
     }
   }
 
   handleUpdate = async () => {
-    await this.state.handleUpdate({table: this.props.table, body: this.state.componentData, id: _get(this.props.componentData, tableIds[this.props.table])})
-    this.state.handleGet({table: this.props.table})
+    await this.state.handleUpdate({table: this.state.table, body: this.state.componentData, id: _get(this.props.componentData, tableIds[this.state.table])})
+    this.state.handleGet({table: this.state.table})
     if (typeof this.props.callback === 'function') {
       this.props.callback()
     }
   }
 
   handleDelete = (id) => async () => {
-    await this.state.handleDelete({table: this.props.table, id})
-    this.state.handleGet({table: this.props.table})
+    await this.state.handleDelete({table: this.state.table, id})
+    this.state.handleGet({table: this.state.table})
     if (typeof this.props.callback === 'function') {
       this.props.callback()
     }
-  }
-
-  handlePopulate = (table) => () => {
-    this.state.handleGet({table})
   }
 
   handleUploadFile = (result) => {
@@ -86,18 +94,35 @@ export default class ContentForm extends Component {
     }
   }
 
+  handleSelectTable = table => () => {
+    this.setState({
+      table
+    })
+  }
+
   render() {
     return (
       <ul>
         {
-          _get(this.props.componentData, tableIds[this.props.table]) ? <button onClick={this.handleDelete(_get(this.props.componentData, tableIds[this.props.table]))}>Delete</button> : null
+          !this.state.table
+            ? <div className="tableChoices">
+                <div>Select content type: </div>
+                <button onClick={this.handleSelectTable('sections')}>Section</button>
+                <button onClick={this.handleSelectTable('news')}>News</button>
+                <button onClick={this.handleSelectTable('documents')}>Document</button>
+                <button onClick={this.handleSelectTable('notices')}>Notice</button>
+              </div>
+            : null
         }
         {
-          componentMappings[this.props.table] ? componentMappings[this.props.table].map((mapping, ind) => {
+          _get(this.props.componentData, tableIds[this.state.table]) ? <button onClick={this.handleDelete(_get(this.props.componentData, tableIds[this.state.table]))}>Delete</button> : null
+        }
+        {
+          componentMappings[this.state.table] ? componentMappings[this.state.table].map((mapping, ind) => {
             return (
               <div key={ind}>
                 {
-                  this.props.table === 'documents' && mapping === 'docUrl' ? <S3ImageUpload storage={this.props.storage} callback={this.handleUploadFile}/>
+                  this.state.table === 'documents' && mapping === 'docUrl' ? <S3ImageUpload storage={this.props.storage} callback={this.handleUploadFile}/>
                     : <div>
                         {mapping}:
                           <input
@@ -113,8 +138,8 @@ export default class ContentForm extends Component {
         }
         {
           _get(this.props.componentData, 'id')
-          ? <button onClick={this.handleUpdate}>Update {`${this.props.table}, id: ${_get(this.props.componentData, tableIds[this.props.table])}`}</button>
-          : <button onClick={this.handleCreate}>Add new {this.props.table}</button>
+          ? <button onClick={this.handleUpdate}>Update {`${this.state.table}, id: ${_get(this.props.componentData, tableIds[this.state.table])}`}</button>
+          : this.state.table ? <button onClick={this.handleCreate}>Add new {this.state.table}</button> : null
         }
       </ul>
     )

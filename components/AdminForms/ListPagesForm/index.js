@@ -28,9 +28,7 @@ export default class ListPagesForm extends Component {
       <ul>
         { this.state.pages && this.state.pages.length ? this.state.pages.map((p, i) => (
           <li key={i}>
-            <button onClick={this.handleSelectPage(p.slug)}>{'<='}</button>
-            {p.id} - {p.slug} : {p.label}
-            <button onClick={this.handleDelete(p.id)}>X</button>
+            <button onClick={this.handleSelectPage(p.slug)}>{`Edit ${p.slug}`}</button>
           </li>
         )) : null}
       </ul>

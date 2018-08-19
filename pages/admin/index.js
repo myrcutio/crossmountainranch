@@ -3,6 +3,7 @@ import { Component } from 'react'
 
 import Amplify, { API, Storage } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react'
+import _get from 'lodash.get'
 
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
 import ListPagesForm from "../../components/AdminForms/ListPagesForm"
@@ -16,6 +17,7 @@ Amplify.configure(amplifyConfig)
 class Admin extends Component {
   state = {
     currentPage: 'homepage',
+    pageId: null,
     regions: {},
     news: [],
     sections: [],
@@ -59,7 +61,8 @@ class Admin extends Component {
       regions: {
         [slug]: data.regions
       },
-      currentPage: slug
+      currentPage: slug,
+      pageId: _get(data, 'regions[0].pageId')
     })
   }
 
@@ -103,27 +106,8 @@ class Admin extends Component {
     return (
       <div>
         <div className="adminControls">
-          <CreatePageForm handleSubmit={this.handleCreate} />
+          {/*<CreatePageForm handleSubmit={this.handleCreate} />*/}
           <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} />
-          <ModalWithHandlers
-            table='documents'
-            handleUpdate={this.handleContentUpdate}
-            handleCreate={this.handleContentCreate}
-            handleDelete={this.handleContentDelete}
-            handleGet={this.handleGetTable}
-            storage={Storage}
-          >
-            <span>Create Document</span>
-          </ModalWithHandlers>
-          <ModalWithHandlers
-            table='pageContentMaps'
-            handleUpdate={this.handleContentUpdate}
-            handleCreate={this.handleContentCreate}
-            handleDelete={this.handleContentDelete}
-            handleGet={this.handleGetTable}
-          >
-            <span>Add Document To Page</span>
-          </ModalWithHandlers>
         </div>
         {
           this.state.currentPage &&
@@ -135,7 +119,9 @@ class Admin extends Component {
               handleDelete={this.handleContentDelete}
               handleGet={this.handleGetTable}
               adminMode="true"
+              storage={Storage}
               regions={this.state.regions[this.state.currentPage]}
+              pageId={this.state.pageId}
             />
           : null
         }

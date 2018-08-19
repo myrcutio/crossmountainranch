@@ -31,7 +31,6 @@ CREATE TABLE `sections` (
   `subtitle` VARCHAR(255),
   `disclosure` VARCHAR(5000),
   `content` VARCHAR(10000) NOT NULL,
-  `orderWeight` INT,
   PRIMARY KEY (`id`));
 
 CREATE TABLE `members` (
@@ -53,7 +52,7 @@ CREATE TABLE `committeeMemberAssociation` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `memberId` INT,
   `committeeId` INT,
-  `orderWeight` INT,
+  `memberOrderWeight` INT,
   PRIMARY KEY (`id`),
   INDEX `committee` (`committeeId` ASC),
   CONSTRAINT `committeeMember` UNIQUE (`memberId`, `committeeId`));

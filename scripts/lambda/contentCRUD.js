@@ -81,11 +81,15 @@ function httpPOST(event, context, callback) {
     ( ${fields.join(',')})
     VALUES
     ( ${fields.map(field => `"${eventBody[field]}"`).join(',')} );
-    `
+  `
+  const tableOrderUpdate = `
+    UPDATE content.pageContentMaps 
+    SET orderWeight = orderWeight + 1 
+    WHERE pageId = ${eventBody.pageId}
+    AND orderWeight >= ${eventBody.orderWeight};
+  `
 
-  console.log('insert to table: ', tableInsert)
-
-  connection.query(tableInsert, function (error, res, fields) {
+  const insertQuery = () => connection.query(tableInsert, function (error, res, fields) {
     if (error) throw error;
 
     let response = {
@@ -99,6 +103,12 @@ function httpPOST(event, context, callback) {
     }
     context.succeed(response)
   })
+
+  if (dbTable === 'pageContentMaps' && typeof eventBody.orderWeight !== 'undefined') {
+    connection.query(tableOrderUpdate, insertQuery)
+  } else {
+    insertQuery()
+  }
 }
 
 function httpPUT(event, context, callback) {
@@ -170,10 +180,9 @@ function httpDELETE(event, context, callback) {
   }
 
   const tableDelete = `
-    SET SQL_SAFE_UPDATES = 0;
-    DELETE FROM content.${dbTable} WHERE id = ${tableId};
-    ${dbTable !== 'pageContentMaps' ? `DELETE FROM content.pageContentMaps WHERE ${tableIds[dbTable]} = ${tableId};` : ''}
-    SET SQL_SAFE_UPDATES = 1;
+    DELETE content.${dbTable}, content.pageContentMaps
+    FROM content.${dbTable}, content.pageContentMaps
+    WHERE content.pageContentMaps.${tableIds[dbTable]} = content.${dbTable}.id AND content.${dbTable}.id = ${tableId}
   `
 
   // TODO if deleting from the documents table, also delete the file from s3

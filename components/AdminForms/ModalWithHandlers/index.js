@@ -18,45 +18,43 @@ Modal.setAppElement('#__next')
 
 class ModalWithHandlers extends Component {
   state = {
-    modalIsOpen: false,
+    editModalIsOpen: false,
+    createModalIsOpen: false
   }
 
-  constructor(props) {
-    super(props)
-
-    this.openModal = this.openModal.bind(this)
-    this.afterOpenModal = this.afterOpenModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
+  openEditModal = () => {
+    if (this.state.editModalIsOpen) return;
+    this.setState({editModalIsOpen: true});
   }
 
-  openModal() {
-    if (this.state.modalIsOpen) return;
-    this.setState({modalIsOpen: true});
+  openCreateModal = () => {
+    if (this.state.createModalIsOpen) return;
+    this.setState({createModalIsOpen: true});
   }
 
-  afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    this.subtitle.style.color = '#f00';
+  closeEditModal = () => {
+    this.setState({editModalIsOpen: false});
   }
 
-  closeModal() {
-    this.setState({modalIsOpen: false});
+  closeCreateModal = () => {
+    this.setState({createModalIsOpen: false});
   }
 
   render() {
     return (
-      <div className="adminControlledRegion" onClick={this.openModal}>
+      <div className="adminControlledRegion">
         <Modal
-          isOpen={this.state.modalIsOpen}
-          onAfterOpen={this.afterOpenModal}
-          onRequestClose={this.closeModal}
+          isOpen={this.state.editModalIsOpen}
+          onRequestClose={this.closeEditModal}
           style={customStyles}
           contentLabel="Edit Region Contents"
         >
 
           <h2 ref={subtitle => this.subtitle = subtitle}></h2>
-          <button onClick={this.closeModal}>X</button>
+          <button onClick={this.closeEditModal}>X</button>
           <ContentForm
+            pageId={this.props.pageId}
+            orderId={this.props.orderId}
             table={this.props.table}
             componentData={this.props.data}
             handleUpdate={this.props.handleUpdate}
@@ -64,10 +62,32 @@ class ModalWithHandlers extends Component {
             handleDelete={this.props.handleDelete}
             handleGet={this.props.handleGet}
             storage={this.props.storage}
-            callback={this.closeModal}
+            callback={this.closeEditModal}
           />
         </Modal>
-        {this.props.children}
+        <Modal
+          isOpen={this.state.createModalIsOpen}
+          onRequestClose={this.closeCreateModal}
+          style={customStyles}
+          contentLabel="Add New Region"
+        >
+          <h2 ref={subtitle => this.subtitle = subtitle}></h2>
+          <button onClick={this.closeCreateModal}>X</button>
+          <ContentForm
+            pageId={this.props.pageId}
+            orderId={this.props.orderId}
+            handleCreate={this.props.handleCreate}
+            handleGet={this.props.handleGet}
+            storage={this.props.storage}
+            callback={this.closeCreateModal}
+          />
+        </Modal>
+        <div className="editOverlay" onClick={this.openEditModal}>
+          {this.props.children}
+        </div>
+        <div className="createOverlay" onClick={this.openCreateModal}>
+          +
+        </div>
       </div>
     );
   }

@@ -4,7 +4,6 @@ module.exports = {
     "subtitle",
     "disclosure",
     "content",
-    "orderWeight"
   ],
   news: [
     "published",
@@ -31,5 +30,21 @@ module.exports = {
     "docUrl",
     "docTitle",
     "docLabel"
+  ],
+  committees: [
+    "committeeName"
+  ],
+  members: [
+    "firstname",
+    "lastname",
+    "fullname",
+    "memberTitle",
+    "memberPosition",
+    "memberEmail"
+  ],
+  committeeMemberAssociation: [
+    "memberId",
+    "committeeId",
+    "memberOrderWeight"
   ]
 }

@@ -13,6 +13,10 @@ const identifyingComponentFields = {
     table: 'news',
     component: News
   },
+  title: {
+    table: 'sections',
+    component: Section
+  },
   content: {
     table: 'sections',
     component: Section
@@ -34,12 +38,22 @@ const identifyingComponentFields = {
 class Layout extends Component {
   state = {
     adminMode: false,
+    pageId: null
   }
   constructor(props) {
     super(props)
     if (props.adminMode) {
       this.state.adminMode = props.adminMode
     }
+    if (props.regions && props.regions.length) {
+      this.state.pageId = props.regions[0].pageId
+    }
+  }
+
+  componentWillReceiveProps({ pageId }) {
+    this.setState({
+      pageId
+    })
   }
 
   switchComponent = (regionArray) => {
@@ -48,7 +62,7 @@ class Layout extends Component {
     let newsArray = regionArray.filter(r => r['newsHeadline'])
     let newsRendered = false
 
-    return regionArray.map((region, i) => {
+    return _orderBy(regionArray, ['orderWeight'], ['asc']).map((region, i) => {
       const identifiedRegion = identifyingComponentFields[_find(Object.keys(region), key => region[key] && identifyingComponentFields[key])]
 
       if (!identifiedRegion) {
@@ -64,21 +78,24 @@ class Layout extends Component {
           <div className="news-feed">
             <h2>News & Events</h2>
 
-            { _orderBy(newsArray, ['published'], ['asc']).map((news, i) => {
+            { _orderBy(newsArray, ['published'], ['asc']).map((news, ni) => {
               return this.state.adminMode
                 ? <ModalWithHandlers
-                  key={i}
+                  key={ni}
                   table={identifiedRegion.table}
                   data={region}
                   handleUpdate={this.props.handleUpdate}
                   handleCreate={this.props.handleCreate}
                   handleDelete={this.props.handleDelete}
                   handleGet={this.props.handleGet}
+                  pageId={this.state.pageId}
+                  storage={this.props.storage}
+                  orderId={i+ni+1}
                 >
                   <RegionComponent data={news} />
                 </ModalWithHandlers>
                 : (
-                <RegionComponent key={i} data={news} />
+                <RegionComponent key={i+ni+1} data={news} />
               )
             })}
           </div>
@@ -90,6 +107,37 @@ class Layout extends Component {
       }
 
       if (this.state.adminMode) {
+        if (i === 0) {
+          return (
+            <div className="firstRegion" key={i}>
+              <ModalWithHandlers
+                handleUpdate={this.props.handleUpdate}
+                handleCreate={this.props.handleCreate}
+                handleDelete={this.props.handleDelete}
+                handleGet={this.props.handleGet}
+                pageId={this.state.pageId}
+                storage={this.props.storage}
+                orderId={i}
+              >
+                <div />
+              </ModalWithHandlers>
+              <ModalWithHandlers
+                key={i}
+                table={identifiedRegion.table}
+                data={region}
+                handleUpdate={this.props.handleUpdate}
+                handleCreate={this.props.handleCreate}
+                handleDelete={this.props.handleDelete}
+                handleGet={this.props.handleGet}
+                pageId={this.state.pageId}
+                storage={this.props.storage}
+                orderId={i+newsArray.length}
+              >
+                <RegionComponent data={region} />
+              </ModalWithHandlers>
+            </div>
+          )
+        }
         return (
           <ModalWithHandlers
             key={i}
@@ -99,6 +147,9 @@ class Layout extends Component {
             handleCreate={this.props.handleCreate}
             handleDelete={this.props.handleDelete}
             handleGet={this.props.handleGet}
+            pageId={this.state.pageId}
+            storage={this.props.storage}
+            orderId={i+newsArray.length}
           >
             <RegionComponent data={region} />
           </ModalWithHandlers>

@@ -20,6 +20,10 @@ body
   width: 100vw
   height: 100vh
   position: absolute
+body.ReactModal__Body--open
+  overflow: hidden
+.ReactModal__Overlay
+  z-index: 2
 
 a
   color: $link-color
@@ -97,6 +101,7 @@ h2
   border: 1px solid #396357
   background: #d9e9e5
   padding: 15px
+  margin-bottom: 5px
   .notice-title
     font-weight: 600
   .notice-meta
@@ -161,9 +166,49 @@ h2
   background: white
   border-radius: 5px
 
-.adminControlledRegion:hover
+.adminControlledRegion
+  position: relative
+
+.adminControlledRegion .editOverlay:hover
   background-color: rgba(0, 0, 255, 0.2)
   cursor: zoom-in
+
+adminControlledRegion .createOverlay
+  z-index: 1
+  position: absolute
+  cursor: copy
+  right: -69px
+  background: white
+  width: 25px
+  border-top-left-radius: 20px
+  border-bottom-left-radius: 20px
+  text-align: right
+  font-weight: bold
+  padding-right: 9px
+
+.adminControlledRegion .createOverlay:hover
+  background-color: rgba(0, 255, 55, .5)
+  position: relative
+  width: calc(100% + 60px)
+  left: 0
+  right: 0
+  text-align: right
+  padding-right: 10px
+  margin-bottom: 10px
+
+.firstRegion .adminControlledRegion:first-of-type .createOverlay:hover
+  top: 16px
+
+.createOverlay
+  right: -70px
+  position: absolute
+  background: white
+  width: 30px
+  text-align: right
+  padding-right: 10px
+  cursor: copy
+  color: green
+  font-weight: 900
 
 .ReactModal__Content
   max-width: 700px
