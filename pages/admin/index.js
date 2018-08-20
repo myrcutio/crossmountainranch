@@ -6,8 +6,12 @@ import {
   Greetings,
   SignIn,
   ConfirmSignIn,
+  RequireNewPassword,
+  SignUp,
+  ConfirmSignUp,
   VerifyContact,
   ForgotPassword,
+  TOTPSetup,
   withAuthenticator } from 'aws-amplify-react'
 import _get from 'lodash.get'
 import _find from 'lodash.find'
@@ -57,7 +61,7 @@ class Admin extends Component {
     const pages = await (await fetch(`${prodApiEndpoint}/routes`)).json()
     const siteMap = await routes()
 
-    const data = await (await fetch(`${prodApiEndpoint}/path/${this.state.currentPage}`)).json()
+    const data = await (await fetch(`${prodApiEndpoint}/path${this.state.currentPage}`)).json()
     this.setState({
       pages,
       regions: {
@@ -70,6 +74,7 @@ class Admin extends Component {
 
   handleGetPage = async (slug) => {
     const data = await (await fetch(`${prodApiEndpoint}/path${slug || this.state.currentPage}`)).json()
+    console.log('looking for ', slug, ' in ', this.state.pages)
     this.setState({
       regions: {
         [slug]: data.regions
@@ -106,13 +111,15 @@ class Admin extends Component {
   handleGetTable = async ({table}) => {
     const tableData = await API.get("ProdAPI", `/${table}`)
 
-    const data = await (await fetch(`${prodApiEndpoint}/path/${this.state.currentPage}`)).json()
+    const data = await (await fetch(`${prodApiEndpoint}/path${this.state.currentPage}`)).json()
+    const currentPageSlug = this.state.currentPage !== "" ? this.state.currentPage : '/'
+    console.log('looking for ', currentPageSlug, ' in ', this.state.pages)
     this.setState({
       [table]: tableData,
       regions: {
         [this.state.currentPage]: data.regions
       },
-      pageId: _find(this.state.pages, page => page.slug === this.state.currentPage, {}).id
+      pageId: _get(_find(this.state.pages, page => page.slug === currentPageSlug), 'id')
     })
   }
 
@@ -120,7 +127,7 @@ class Admin extends Component {
     return (
       <div>
         <div className="adminControls">
-          {/*<CreatePageForm handleSubmit={this.handleCreate} />*/}
+          <CreatePageForm handleSubmit={this.handleCreate} />
           <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} />
         </div>
         <Layout
@@ -139,11 +146,4 @@ class Admin extends Component {
   }
 }
 
-
-export default withAuthenticator(Admin, true, [
-  <Greetings />,
-  <SignIn />,
-  <ConfirmSignIn />,
-  <VerifyContact />,
-  <ForgotPassword />
-])
+export default withAuthenticator(Admin, true)

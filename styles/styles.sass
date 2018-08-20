@@ -158,6 +158,10 @@ h2
   text-align: center
   line-height: 2
 
+// HACK ALERT! This is to hide the SignUp link since cognito does not allow it
+.amplify-section-footer-content div:nth-child(2)
+  display: none !important
+
 .amplify-nav-bar
   color: white
   border-color: transparent !important
@@ -212,3 +216,4 @@ adminControlledRegion .createOverlay
 
 .ReactModal__Content
   max-width: 700px
+

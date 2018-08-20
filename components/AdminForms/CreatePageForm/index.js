@@ -11,7 +11,11 @@ export default class CreatePageForm extends Component {
   }
 
   handleSubmitCreatePage = (event) => {
-    this.props.handleSubmit(this.state)
+    const newPageValues = this.state
+    if (!this.state.slug.startsWith('/')) {
+      newPageValues.slug = '/' + newPageValues.slug
+    }
+    this.props.handleSubmit(newPageValues)
     event.preventDefault();
   }
 
