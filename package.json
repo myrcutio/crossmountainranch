@@ -1,6 +1,6 @@
 {
   "name": "cross-mountain-ranch",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
   "scripts": {
     "dev": "next",
@@ -20,7 +20,7 @@
     "lodash.some": "^4.6.0",
     "moment": "^2.22.2",
     "mysql": "github:mysqljs/mysql",
-    "next": "^6.1.1",
+    "next": "^6.1.1-canary.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-modal": "^3.5.1",

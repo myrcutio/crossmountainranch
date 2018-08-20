@@ -13,7 +13,7 @@ App.getInitialProps = async (context) => {
   const pageSlug = context.req.url
   const data = await (await fetch(`${prodApiEndpoint}/path${pageSlug}`)).json()
   const { regions } = data
-  console.log('site data: ', data)
+  console.log('if context is empty, i wouldnt know it because shit still rendered: ', pageSlug, ':', regions.length)
   return { regions, siteMap }
 }
 
