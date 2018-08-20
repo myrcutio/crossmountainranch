@@ -1,0 +1,41 @@
+service: cmr-cms-build
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  timeout: 30
+  memorySize: 2048
+  region: us-west-2
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "codebuild:StartBuild"
+      Resource:
+      - "arn:aws:codebuild:us-west-2:847021527729:project/cmr-cms-prod"
+
+custom:
+  s3Bucket: ${opt:s3Bucket, "crossmountainranch.org"}
+  accountId: ${opt:accountId, "847021527729"}
+  distributionId: ${opt:distributionId, ""}
+
+package:
+  exclude:
+    - "**/*"
+  include:
+    - data/aws-exports.js
+    - scripts/build/buildLambda.js
+
+functions:
+  build:
+    handler: scripts/build/buildLambda.build
+    events:
+      - http:
+          path: /build
+          method: patch
+          cors: true
+          authorizer:
+            type: AWS_IAM
+    environment:
+      region: ${self:provider.region}
+      s3Bucket: ${self:custom.s3Bucket}
+      distributionId: ${self:custom.distributionId}

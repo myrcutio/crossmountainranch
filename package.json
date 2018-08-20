@@ -21,14 +21,14 @@
     "moment": "^2.22.2",
     "mysql": "github:mysqljs/mysql",
     "next": "^6.1.1-canary.2",
+    "@zeit/next-sass": "^0.2.0",
+    "node-sass": "^4.9.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-modal": "^3.5.1",
     "react-protected-mailto": "^1.0.3"
   },
   "devDependencies": {
-    "@zeit/next-sass": "^0.2.0",
-    "node-sass": "^4.9.3",
     "serverless": "^1.30.0",
     "serverless-plugin-include-dependencies": "^3.1.1",
     "serverless-plugin-inject-dependencies": "0.0.5",

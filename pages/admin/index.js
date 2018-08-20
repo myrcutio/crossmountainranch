@@ -123,12 +123,16 @@ class Admin extends Component {
     })
   }
 
+  handleRebuild = async () => {
+    return API.patch("BuildAPI", "")
+  }
+
   render() {
     return (
       <div>
         <div className="adminControls">
           <CreatePageForm handleSubmit={this.handleCreate} />
-          <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} />
+          <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} handleRebuild={this.handleRebuild}/>
         </div>
         <Layout
           handleUpdate={this.handleContentUpdate}
