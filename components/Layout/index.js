@@ -1,15 +1,21 @@
 import { Component } from 'react'
-import * as _find from 'lodash.find'
 import Menu from '../Menu'
 import News from '../News'
 import Section from '../Section'
 import Notice from '../Notice'
 import Document from '../Document'
+import CommitteeMember from '../CommitteeMember'
 import ModalWithHandlers from "../AdminForms/ModalWithHandlers"
 import _orderBy from "lodash.orderby"
 import _get from 'lodash.get'
+import _find from 'lodash.find'
+import _some from 'lodash.some'
 
 const identifyingComponentFields = {
+  fullName: {
+    table: 'committeeMembers',
+    component: CommitteeMember
+  },
   newsHeadline: {
     table: 'news',
     component: News
@@ -74,6 +80,20 @@ class Layout extends Component {
     // Aggregating news because my data model didn't account for it well enough
     let newsArray = regionArray.filter(r => r['newsHeadline'])
     let newsRendered = false
+
+    if ((!regionArray || !regionArray.length || ! _some(regionArray, r => _some(Object.keys(identifyingComponentFields), f => r[f]))) && this.state.adminMode) {
+      return (
+        <div>
+          <ModalWithHandlers
+            {...this.props}
+            pageId={this.state.pageId}
+            orderId={0}
+          >
+            <div>Add first region</div>
+          </ModalWithHandlers>
+        </div>
+      )
+    }
 
     return _orderBy(regionArray, ['orderWeight'], ['asc']).map((region, i) => {
       const identifiedRegion = identifyingComponentFields[_find(Object.keys(region), key => region[key] && identifyingComponentFields[key])]
@@ -161,7 +181,7 @@ class Layout extends Component {
     const regions = this.props.regions || []
     return (
       <div className="main">
-        <Menu />
+        <Menu siteMap={this.props.siteMap} />
 
         <div className="main-content">
           {this.switchComponent(regions)}

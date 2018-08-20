@@ -10,6 +10,8 @@ import {
   ForgotPassword,
   withAuthenticator } from 'aws-amplify-react'
 import _get from 'lodash.get'
+import _find from 'lodash.find'
+import routes from '../../routes.es6'
 
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
 import ListPagesForm from "../../components/AdminForms/ListPagesForm"
@@ -22,12 +24,13 @@ Amplify.configure(amplifyConfig)
 
 class Admin extends Component {
   state = {
-    currentPage: 'homepage',
+    currentPage: '',
     pageId: null,
     regions: {},
     news: [],
     sections: [],
     pages: [],
+    siteMap: {},
     notices: [],
     documents: [],
     committees: [],
@@ -51,24 +54,28 @@ class Admin extends Component {
   }
 
   getPages = async () => {
-    const pages = await (await fetch(`${prodApiEndpoint}/path`)).json()
+    const pages = await (await fetch(`${prodApiEndpoint}/routes`)).json()
+    const siteMap = await routes()
+
     const data = await (await fetch(`${prodApiEndpoint}/path/${this.state.currentPage}`)).json()
     this.setState({
       pages,
       regions: {
         [this.state.currentPage]: data.regions
-      }
+      },
+      pageId: _get(data, 'regions[0].pageId'),
+      siteMap
     })
   }
 
   handleGetPage = async (slug) => {
-    const data = await (await fetch(`${prodApiEndpoint}/path/${slug || this.state.currentPage}`)).json()
+    const data = await (await fetch(`${prodApiEndpoint}/path${slug || this.state.currentPage}`)).json()
     this.setState({
       regions: {
         [slug]: data.regions
       },
       currentPage: slug,
-      pageId: _get(data, 'regions[0].pageId')
+      pageId: _find(this.state.pages, page => page.slug === slug, {}).id
     })
   }
 
@@ -105,7 +112,7 @@ class Admin extends Component {
       regions: {
         [this.state.currentPage]: data.regions
       },
-      pageId: _get(data, 'regions[0].pageId')
+      pageId: _find(this.state.pages, page => page.slug === this.state.currentPage, {}).id
     })
   }
 
@@ -116,22 +123,17 @@ class Admin extends Component {
           {/*<CreatePageForm handleSubmit={this.handleCreate} />*/}
           <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} />
         </div>
-        {
-          this.state.currentPage &&
-          this.state.regions[this.state.currentPage] &&
-          this.state.regions[this.state.currentPage].length ?
-            <Layout
-              handleUpdate={this.handleContentUpdate}
-              handleCreate={this.handleContentCreate}
-              handleDelete={this.handleContentDelete}
-              handleGet={this.handleGetTable}
-              adminMode="true"
-              storage={Storage}
-              regions={this.state.regions[this.state.currentPage]}
-              pageId={this.state.pageId}
-            />
-            : null
-        }
+        <Layout
+          handleUpdate={this.handleContentUpdate}
+          handleCreate={this.handleContentCreate}
+          handleDelete={this.handleContentDelete}
+          handleGet={this.handleGetTable}
+          adminMode="true"
+          storage={Storage}
+          regions={_get(this.state.regions, `[${this.state.currentPage}]`, [])}
+          pageId={this.state.pageId}
+          siteMap={this.state.siteMap}
+        />
       </div>
     )
   }

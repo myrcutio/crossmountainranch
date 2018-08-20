@@ -49,8 +49,6 @@ export default class ContentForm extends Component {
 
   handleCreate = async () => {
     const createId = _get(await this.state.handleCreate({table: this.state.table, body: this.state.data}), 'message.insertId')
-    console.log('create id: ', createId)
-    console.log('page id: ', this.props.pageId)
     if (createId && this.props.pageId) {
       const pageAssociationParams = {
         table: 'pageContentMaps',
@@ -113,6 +111,7 @@ export default class ContentForm extends Component {
                 <button onClick={this.handleSelectTable('news')}>News</button>
                 <button onClick={this.handleSelectTable('documents')}>Document</button>
                 <button onClick={this.handleSelectTable('notices')}>Notice</button>
+                <button onClick={this.handleSelectTable('committeeMembers')}>Committee Member</button>
               </div>
             : null
         }

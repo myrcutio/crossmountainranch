@@ -20,7 +20,7 @@ module.exports = {
   pageContentMaps: [
     "pageId",
     "sectionId",
-    "committeeId",
+    "committeeMemberId",
     "documentId",
     "newsId",
     "noticeId",
@@ -31,20 +31,9 @@ module.exports = {
     "docTitle",
     "docLabel"
   ],
-  committees: [
-    "committeeName"
-  ],
-  members: [
-    "firstname",
-    "lastname",
-    "fullname",
-    "memberTitle",
-    "memberPosition",
-    "memberEmail"
-  ],
-  committeeMemberAssociation: [
-    "memberId",
-    "committeeId",
-    "memberOrderWeight"
+  committeeMembers: [
+    "fullName",
+    "committeeName",
+    "committeePosition"
   ]
 }

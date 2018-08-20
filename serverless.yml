@@ -40,12 +40,20 @@ functions:
           path: /path/{slug+}
           method: get
           cors: true
-  pagesGet:
+  homepageGet:
+    handler: scripts/lambda/page.httpGET
+    warmup: true
+    events:
+      - http:
+          path: /path/
+          method: get
+          cors: true
+  routesGet:
     handler: scripts/lambda/page.httpGETALL
     warmup: true
     events:
       - http:
-          path: /path
+          path: /routes
           method: get
           cors: true
 
@@ -137,3 +145,8 @@ resources:
                 - DELETE
               AllowedOrigins:
                 - "*"
+              ExposedHeaders:
+                - 'ETag'
+                - 'x-amz-server-side-encryption'
+                - 'x-amz-request-id'
+                - 'x-amz-id-2'

@@ -1,14 +1,20 @@
 import fetch from 'isomorphic-fetch'
 import "../styles/styles.sass"
-import Layout from "../components/Layout";
+import Layout from "../components/Layout"
+import { prodApiEndpoint } from "../data/aws-exports"
+import routes from '../routes.es6'
 
-const Home = ({ contentModel }) => (
-  <Layout regions={contentModel.regions} />
+const App = ({ regions, siteMap }) => (
+  <Layout regions={regions} siteMap={siteMap}/>
 )
 
-Home.getInitialProps = async () => {
-  const contentModel = await (await fetch('https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod/path/homepage')).json()
-  return { contentModel }
+App.getInitialProps = async (context) => {
+  const siteMap = await routes()
+  const pageSlug = context.req.url
+  const data = await (await fetch(`${prodApiEndpoint}/path${pageSlug}`)).json()
+  const { regions } = data
+  console.log('site data: ', data)
+  return { regions, siteMap }
 }
 
-export default Home
+export default App

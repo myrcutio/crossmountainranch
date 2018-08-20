@@ -12,7 +12,7 @@ CREATE TABLE `pageContentMaps` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `pageId` INT,
   `sectionId` INT,
-  `committeeId` INT,
+  `committeeMemberId` INT,
   `documentId` INT,
   `newsId` INT,
   `noticeId` INT,
@@ -20,7 +20,7 @@ CREATE TABLE `pageContentMaps` (
   PRIMARY KEY (`id`),
   INDEX `page` (`pageId` ASC),
   CONSTRAINT `sections` UNIQUE (`pageId`, `sectionId`),
-  CONSTRAINT `committees` UNIQUE (`pageId`, `committeeId`),
+  CONSTRAINT `committeeMembers` UNIQUE (`pageId`, `committeeMemberId`),
   CONSTRAINT `newsArticles` UNIQUE (`pageId`, `newsId`),
   CONSTRAINT `notices` UNIQUE (`pageId`, `noticeId`),
   CONSTRAINT `documents` UNIQUE (`pageId`, `documentId`));
@@ -33,29 +33,12 @@ CREATE TABLE `sections` (
   `content` VARCHAR(10000) NOT NULL,
   PRIMARY KEY (`id`));
 
-CREATE TABLE `members` (
+CREATE TABLE `committeeMembers` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `firstname` VARCHAR(255),
-  `lastname` VARCHAR(255),
-  `fullname` VARCHAR(1000) NOT NULL,
-  `memberTitle` VARCHAR(255),
-  `memberPosition` VARCHAR(255),
-  `memberEmail` VARCHAR(255) UNIQUE,
+  `fullName` VARCHAR(1000) NOT NULL,
+  `committeeName` VARCHAR(255),
+  `committeePosition` VARCHAR(255),
   PRIMARY KEY (`id`));
-
-CREATE TABLE `committees` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `committeeName` VARCHAR(1000) NOT NULL,
-  PRIMARY KEY (`id`));
-
-CREATE TABLE `committeeMemberAssociation` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `memberId` INT,
-  `committeeId` INT,
-  `memberOrderWeight` INT,
-  PRIMARY KEY (`id`),
-  INDEX `committee` (`committeeId` ASC),
-  CONSTRAINT `committeeMember` UNIQUE (`memberId`, `committeeId`));
 
 CREATE TABLE `documents` (
   `id` INT NOT NULL AUTO_INCREMENT,

@@ -14,32 +14,20 @@ function httpGET(event, context, callback) {
     return callback(null, 'Lambda is warm!')
   }
 
-  let slug, pages
-  if (event && event.pathParameters && event.pathParameters.slug) {
-    slug = event.pathParameters.slug
-  } else {
-    context.succeed({
-      statusCode: 400,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        error: "url slug is required"
-      })
-    })
-  }
+  let pages
+  const slug = `/${_get(event, 'pathParameters.slug', '')}`
 
   const pageQuery = `
-SELECT * from content.pageContentMaps as pcm 
-LEFT JOIN content.sections on pcm.sectionId = content.sections.id
-LEFT JOIN content.committees on pcm.committeeId = content.committees.id
-LEFT JOIN content.documents on pcm.documentId = content.documents.id
-LEFT JOIN content.news on pcm.newsId = content.news.id
-LEFT JOIN content.notices on pcm.noticeId = content.notices.id
-LEFT JOIN content.pages on pcm.pageId = content.pages.id
-WHERE content.pages.slug = ${JSON.stringify(slug)}
-ORDER BY pcm.orderWeight ASC
-`
+    SELECT * from content.pageContentMaps as pcm 
+    LEFT JOIN content.sections on pcm.sectionId = content.sections.id
+    LEFT JOIN content.committeeMembers on pcm.committeeMEmberId = content.committeeMembers.id
+    LEFT JOIN content.documents on pcm.documentId = content.documents.id
+    LEFT JOIN content.news on pcm.newsId = content.news.id
+    LEFT JOIN content.notices on pcm.noticeId = content.notices.id
+    LEFT JOIN content.pages on pcm.pageId = content.pages.id
+    WHERE content.pages.slug = ${JSON.stringify(slug)}
+    ORDER BY pcm.orderWeight ASC
+  `
 
   connection.query(pageQuery, function (error, res, fields) {
     if (error) throw error;

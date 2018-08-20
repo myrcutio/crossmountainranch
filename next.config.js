@@ -1,14 +1,9 @@
 // next.config.js
 const withSass = require('@zeit/next-sass')
+const routes = require('./routes')
 
 module.exports = withSass({
   exportPathMap: async function (defaultPathMap) {
-    return {
-      '/': { page: '/'},
-      '/contact': { page: '/contact'},
-      '/board': { page: '/board'},
-      '/documents': { page: '/documents'},
-      '/admin': { page: '/admin'}
-    }
+    return await routes()
   }
 })

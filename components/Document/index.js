@@ -1,10 +1,10 @@
 export default ({data}) => (
   <div>
-    <h2>{data.docTitle}</h2>
-    <ul>
+    { data.docTitle ? <h2>{data.docTitle}</h2> : null }
+    { data.docUrl ? <ul>
       <li>
         <a href={data.docUrl}>{data.docLabel}</a>
       </li>
-    </ul>
+    </ul> : null }
   </div>
 )

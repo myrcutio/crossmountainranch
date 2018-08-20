@@ -9,8 +9,6 @@ const connection = mysql.createConnection({
   database : 'content'
 })
 
-const schemaMap = dataSchema
-
 function httpGETTable(event, context, callback) {
   /** Immediate response for WarmUP plugin */
   if (event.source === 'serverless-plugin-warmup') {
@@ -74,7 +72,7 @@ function httpPOST(event, context, callback) {
 
   console.log('current event body: ', eventBody)
 
-  const fields = schemaMap[dbTable].filter(f => eventBody[f])
+  const fields = dataSchema[dbTable].filter(f => eventBody[f])
 
   const tableOrderUpdate = `
     CALL bump_order_if_duplicate(${eventBody.orderWeight},${eventBody.pageId});
@@ -130,7 +128,7 @@ function httpPUT(event, context, callback) {
     return;
   }
 
-  const fields = schemaMap[dbTable].filter(field => eventBody[field])
+  const fields = dataSchema[dbTable].filter(field => eventBody[field])
 
   const tableUpdate = `
     UPDATE content.${dbTable}
