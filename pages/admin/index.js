@@ -13,6 +13,7 @@ import {
   ForgotPassword,
   TOTPSetup,
   withAuthenticator } from 'aws-amplify-react'
+import Spinner from '../../components/Spinner'
 import _get from 'lodash.get'
 import _find from 'lodash.find'
 import routes from '../../routes.es6'
@@ -38,7 +39,8 @@ class Admin extends Component {
     notices: [],
     documents: [],
     committees: [],
-    members: []
+    members: [],
+    isLoading: false
   }
 
   componentWillMount = async () => {
@@ -46,6 +48,9 @@ class Admin extends Component {
   }
 
   handleCreate = async ({ slug, label }) => {
+    this.setState({
+      isLoading: true
+    })
     await API.post("ProdAPI", "/page", {
       body: { slug, label }
     })
@@ -53,6 +58,9 @@ class Admin extends Component {
   }
 
   handleDelete = async (id) => {
+    this.setState({
+      isLoading: true
+    })
     await API.del("ProdAPI", `/page/${id}`)
     this.getPages()
   }
@@ -68,58 +76,64 @@ class Admin extends Component {
         [this.state.currentPage]: data.regions
       },
       pageId: _get(data, 'regions[0].pageId'),
-      siteMap
+      siteMap,
+      isLoading: false
     })
   }
 
   handleGetPage = async (slug) => {
+    this.setState({
+      isLoading: true
+    })
     const data = await (await fetch(`${prodApiEndpoint}/path${slug || this.state.currentPage}`)).json()
-    console.log('looking for ', slug, ' in ', this.state.pages)
     this.setState({
       regions: {
         [slug]: data.regions
       },
       currentPage: slug,
-      pageId: _find(this.state.pages, page => page.slug === slug, {}).id
-    })
-  }
-
-  handleCreateSection = (body) => async () => {
-    await API.post("ProdAPI", `/sections`, body)
-  }
-
-  handleCreateNews = ({ newsHeadline, newsSubtitle, newsContent}) => async () => {
-    await API.post("ProdAPI", `/news`, {
-      body: { newsHeadline, newsSubtitle, newsContent}
+      pageId: _get(_find(this.state.pages, page => page.slug === slug), 'id'),
+      isLoading: false
     })
   }
 
   handleContentCreate = ({table, body}) => {
+    this.setState({
+      isLoading: true
+    })
     return API.post("ProdAPI", `/${table}`, {
       body
     })
   }
   handleContentUpdate = ({table, body, id}) => {
+    this.setState({
+      isLoading: true
+    })
     return API.put("ProdAPI", `/${table}/${id}`, {
       body
     })
   }
   handleContentDelete = ({table, id}) => {
+    this.setState({
+      isLoading: true
+    })
     return API.del("ProdAPI", `/${table}/${id}`)
   }
 
   handleGetTable = async ({table}) => {
+    this.setState({
+      isLoading: true
+    })
     const tableData = await API.get("ProdAPI", `/${table}`)
 
     const data = await (await fetch(`${prodApiEndpoint}/path${this.state.currentPage}`)).json()
     const currentPageSlug = this.state.currentPage !== "" ? this.state.currentPage : '/'
-    console.log('looking for ', currentPageSlug, ' in ', this.state.pages)
     this.setState({
       [table]: tableData,
       regions: {
         [this.state.currentPage]: data.regions
       },
-      pageId: _get(_find(this.state.pages, page => page.slug === currentPageSlug), 'id')
+      pageId: _get(_find(this.state.pages, page => page.slug === currentPageSlug), 'id'),
+      isLoading: false
     })
   }
 
@@ -130,6 +144,7 @@ class Admin extends Component {
   render() {
     return (
       <div>
+        { this.state.isLoading ? <Spinner name="line-scale"/> : null}
         <div className="adminControls">
           <CreatePageForm handleSubmit={this.handleCreate} />
           <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} handleRebuild={this.handleRebuild}/>

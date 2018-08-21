@@ -14,7 +14,9 @@ export default class ContentForm extends Component {
     handleGet: () => {},
     handleCreate: () => {},
     handleUpdate: () => {},
-    handleOnChange: () => {}
+    handleOnChange: () => {},
+    focusedHandler: () => {},
+    isLoading: false
   }
 
   constructor(props) {
@@ -48,35 +50,38 @@ export default class ContentForm extends Component {
   }
 
   handleCreate = async () => {
-    const createId = _get(await this.state.handleCreate({table: this.state.table, body: this.state.data}), 'message.insertId')
+    const table = this.state.table
+    const createId = _get(await this.state.handleCreate({table, body: this.state.data}), 'message.insertId')
     if (createId && this.props.pageId) {
       const pageAssociationParams = {
         table: 'pageContentMaps',
         body: {
           pageId: this.props.pageId,
-          [tableIds[this.state.table]]: createId,
+          [tableIds[table]]: createId,
           orderWeight: this.props.orderId
         }
       }
       await this.state.handleCreate(pageAssociationParams)
     }
-    this.state.handleGet({table: this.state.table})
+    this.state.handleGet({table})
     if (typeof this.props.callback === 'function') {
       this.props.callback()
     }
   }
 
   handleUpdate = async () => {
-    await this.state.handleUpdate({table: this.state.table, body: this.state.data, id: _get(this.props.data, tableIds[this.state.table])})
-    this.state.handleGet({table: this.state.table})
+    const table = this.state.table
+    await this.state.handleUpdate({table, body: this.state.data, id: _get(this.props.data, tableIds[table])})
+    this.state.handleGet({table})
     if (typeof this.props.callback === 'function') {
       this.props.callback()
     }
   }
 
   handleDelete = (id) => async () => {
-    await this.state.handleDelete({table: this.state.table, id})
-    this.state.handleGet({table: this.state.table})
+    const table = this.state.table
+    await this.state.handleDelete({table, id})
+    this.state.handleGet({table})
     if (typeof this.props.callback === 'function') {
       this.props.callback()
     }

@@ -217,3 +217,43 @@ adminControlledRegion .createOverlay
 .ReactModal__Content
   max-width: 700px
 
+// Loading Spinner
+@keyframes animation-spinning
+  0%
+    transform: scaleY(1)
+  50%
+    transform: scaleY(0.4)
+  100%
+    transform: scaleY(1)
+
+.sk-spinner
+  display: flex
+  position: fixed
+  top: 0
+  bottom: 0
+  right: 0
+  left: 0
+  background: rgba(50,50,50,0.3)
+  justify-content: center
+  align-items: center
+  z-index: 9
+
+.line-scale>div
+  background-color: rgb(158, 124, 114)
+  border: 1px dotted #ffba8b
+  width: 4px
+  height: 35px
+  display: inline-block
+  margin: 2px
+  border-radius: 2px
+
+.line-scale>div:nth-child(1)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.1s infinite normal both running
+.line-scale>div:nth-child(2)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.2s infinite normal both running
+.line-scale>div:nth-child(3)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.3s infinite normal both running
+.line-scale>div:nth-child(4)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.4s infinite normal both running
+.line-scale>div:nth-child(5)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.5s infinite normal both running

@@ -1,6 +1,6 @@
 const prodApiEndpoint = "https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod"
 const s3FileEndpoint = "https://s3-us-west-2.amazonaws.com/cmr-cms-dev-uploads/public/"
-const buildEndpoint = "https://laplzzkige.execute-api.us-west-2.amazonaws.com/prod/build"
+const buildEndpoint = "https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod/build"
 const codeBuildProject = "cmr-cms-prod"
 const codeBuildBranch = "feature/aurora_mysql_endpoint"
 

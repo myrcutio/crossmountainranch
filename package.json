@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@zeit/next-sass": "^0.2.0",
     "aws-amplify": "^1.0.6",
     "aws-amplify-react": "^1.0.6",
     "isomorphic-fetch": "^2.2.1",
@@ -21,7 +22,6 @@
     "moment": "^2.22.2",
     "mysql": "github:mysqljs/mysql",
     "next": "^6.1.1-canary.2",
-    "@zeit/next-sass": "^0.2.0",
     "node-sass": "^4.9.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "serverless": "^1.30.0",
+    "serverless-iam-roles-per-function": "^1.0.2",
     "serverless-plugin-include-dependencies": "^3.1.1",
     "serverless-plugin-inject-dependencies": "0.0.5",
     "serverless-plugin-warmup": "^3.6.2-rc.1"
