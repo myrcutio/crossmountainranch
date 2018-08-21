@@ -26,18 +26,19 @@ export default class ListPagesForm extends Component {
   }
 
   handleRebuild = () => {
-    if (window.localStorage.getItem('buildRateLimited') === "false"){
+    const isRateLimited = window.localStorage.getItem('buildRateLimited')
+    if (isRateLimited === "false" || isRateLimited === "null" || isRateLimited === null){
       console.log('current build rate limit: ', window.localStorage.getItem('buildRateLimited'))
       window.localStorage.setItem('buildRateLimited', true)
 
       setTimeout(() => {
         console.log('build rate limit removed, fire away!')
         window.localStorage.setItem('buildRateLimited', false)
-      }, 18000)
+      }, 180000)
 
       this.state.handleRebuild()
     } else {
-      console.log('build is currently rate limited, wait 5 minutes and try again')
+      console.log('build is currently rate limited, wait 3 minutes and try again')
     }
   }
 
