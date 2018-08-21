@@ -1,0 +1,39 @@
+module.exports = {
+  sections: [
+    "title",
+    "subtitle",
+    "disclosure",
+    "content",
+  ],
+  news: [
+    "published",
+    "newsHeadline",
+    "newsSubtitle",
+    "newsContent"
+  ],
+  notices: [
+    "noticeTitle",
+    "noticeDate",
+    "noticeLocation",
+    "noticeContent"
+  ],
+  pageContentMaps: [
+    "pageId",
+    "sectionId",
+    "committeeMemberId",
+    "documentId",
+    "newsId",
+    "noticeId",
+    "orderWeight"
+  ],
+  documents: [
+    "docUrl",
+    "docTitle",
+    "docLabel"
+  ],
+  committeeMembers: [
+    "fullName",
+    "committeeName",
+    "committeePosition"
+  ]
+}
