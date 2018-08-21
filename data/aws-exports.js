@@ -1,8 +1,8 @@
 const prodApiEndpoint = "https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod"
-const s3FileEndpoint = "https://s3-us-west-2.amazonaws.com/cmr-cms-dev-uploads/public/"
+const s3FileEndpoint = "https://s3-us-west-2.amazonaws.com/cmr-cms-prod-uploads/public/"
 const buildEndpoint = "https://is0oiqxqh3.execute-api.us-west-2.amazonaws.com/prod/build"
 const codeBuildProject = "cmr-cms-prod"
-const codeBuildBranch = "feature/aurora_mysql_endpoint"
+const codeBuildBranch = "master"
 
 module.exports.prodApiEndpoint = prodApiEndpoint
 module.exports.s3FileEndpoint = s3FileEndpoint
@@ -33,7 +33,7 @@ module.exports.amplifyConfig = {
     ]
   },
   Storage: {
-    bucket: 'cmr-cms-dev-uploads',
+    bucket: 'cmr-cms-prod-uploads',
     region: 'us-west-2'
   }
 }
