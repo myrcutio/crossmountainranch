@@ -1,36 +1,19 @@
-import contentModel from '../static/data/content.js'
-
-import Menu from '../components/Menu'
-import News from '../components/News'
+import fetch from 'isomorphic-fetch'
 import "../styles/styles.sass"
+import Layout from "../components/Layout"
+import { prodApiEndpoint } from "../data/aws-exports"
+import routes from '../routes.es6'
 
-const Home = ({ contentModel }) => (
-  <div className="main">
-    <Menu links={contentModel.sitemap} footer={contentModel.contactBlock}/>
-
-    <div className="main-content">
-      <div className="notice">
-        <div className="notice-title">{contentModel.alert.title}</div>
-        <div className="notice-meta">{contentModel.alert.date} - {contentModel.alert.location}</div>
-        <div className="notice-description">{contentModel.alert.description}</div>
-      </div>
-
-      <p className="description">
-        {contentModel.homepage.description}
-      </p>
-
-      <News />
-
-      <p className="disclosure">
-        {contentModel.homepage.disclosure}
-      </p>
-    </div>
-  </div>
+const App = ({ regions, siteMap }) => (
+  <Layout regions={regions} siteMap={siteMap}/>
 )
 
-Home.getInitialProps = async () => {
-  // const contentModel = await (await fetch('https://www.crossmountainranch.org/data/content.json')).json()
-  return { contentModel }
+App.getInitialProps = async (context) => {
+  const siteMap = await routes()
+  const pageSlug = context.req.url
+  const data = await (await fetch(`${prodApiEndpoint}/path${pageSlug}`)).json()
+  const { regions } = data
+  return { regions, siteMap }
 }
 
-export default Home
+export default App

@@ -1,18 +1,12 @@
 import Document, { Head, Main, NextScript } from 'next/document'
 
 import "../styles/styles.sass"
-
-import contentModel from '../static/data/content.js'
-
 import Logo from '../components/Logo'
-// import fetch from 'isomorphic-fetch'
-// import Header from '../components/Header'
 
 export default class MyDocument extends Document {
   static async getInitialProps({ renderPage }) {
     const page = renderPage()
-    // const contentModel = await (await fetch('https://www.crossmountainranch.org/data/content.json')).json()
-    return { ...page, contentModel }
+    return { ...page }
   }
 
   constructor(props) {
@@ -39,7 +33,6 @@ export default class MyDocument extends Document {
           <div className="content-wrapper">
             <Logo />
             <Main />
-
             {/*<div className="footer">
               Copyright 2018 &copy; Cross Mountain Ranch Homeowners Cooperative
             </div>*/}

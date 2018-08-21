@@ -1,15 +1,12 @@
-import contentModel from '../../static/data/content'
+import moment from 'moment'
 
-export default() => (
-  <div className="news-feed">
-    <h2>News & Events</h2>
-
-    {contentModel.news.map((news, i) => (
-      <div className="news-item" key={i}>
-        <div className="news-title">{news.title}</div>
-        <div className="news-date">{news.date}</div>
-        <div className="news-description">{news.content}</div>
-      </div>
-    ))}
-  </div>
-)
+export default({ data }) => {
+  return (
+    <div className="news-item" key={data.newsId}>
+      <div className="news-title">{data.newsHeadline}</div>
+      <div className="news-subtitle">{data.newsSubtitle}</div>
+      <div className="news-date">{moment(data.published).utc().format('dddd MMMM DD, YYYY')}</div>
+      <div className="news-description">{data.newsContent}</div>
+    </div>
+  )
+}

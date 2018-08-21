@@ -1,12 +1,12 @@
 import React from 'react'
 import Menu from '../../components/Menu'
 import Mailto from 'react-protected-mailto'
-
+import routes from '../../routes.es6'
 import contentModel from '../../static/data/content.js'
 
-const Contact = ({ contentModel }) => (
+const Contact = ({ contentModel, siteMap }) => (
   <div className="main">
-    <Menu />
+    <Menu siteMap={siteMap} />
     <div className="main-content">
       <div className="contact-section">
         <h2>Contact Association Manager</h2>
@@ -37,8 +37,9 @@ const Contact = ({ contentModel }) => (
 )
 
 Contact.getInitialProps = async () => {
+  const siteMap = await routes()
   // const contentModel = await (await fetch('https://www.crossmountainranch.org/data/content.json')).json()
-  return { contentModel }
+  return { contentModel, siteMap }
 }
 
 export default Contact

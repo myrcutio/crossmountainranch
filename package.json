@@ -1,6 +1,6 @@
 {
   "name": "cross-mountain-ranch",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
   "scripts": {
     "dev": "next",
@@ -12,11 +12,27 @@
   "description": "",
   "dependencies": {
     "@zeit/next-sass": "^0.2.0",
+    "aws-amplify": "^1.0.6",
+    "aws-amplify-react": "^1.0.6",
     "isomorphic-fetch": "^2.2.1",
-    "next": "^6.1.1",
+    "lodash.find": "^4.6.0",
+    "lodash.get": "^4.4.2",
+    "lodash.orderby": "^4.6.0",
+    "lodash.some": "^4.6.0",
+    "moment": "^2.22.2",
+    "mysql": "github:mysqljs/mysql",
+    "next": "^6.1.1-canary.2",
     "node-sass": "^4.9.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-modal": "^3.5.1",
     "react-protected-mailto": "^1.0.3"
+  },
+  "devDependencies": {
+    "serverless": "^1.30.0",
+    "serverless-iam-roles-per-function": "^1.0.2",
+    "serverless-plugin-include-dependencies": "^3.1.1",
+    "serverless-plugin-inject-dependencies": "0.0.5",
+    "serverless-plugin-warmup": "^3.6.2-rc.1"
   }
 }
