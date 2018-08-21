@@ -145,7 +145,7 @@ functions:
         Action:
           - "codebuild:StartBuild"
         Resource:
-        - "arn:aws:codebuild:us-west-2:847021527729:project/cmr-cms-prod"
+        - "*"
       - Effect: "Allow"
         Action:
           - "execute-api:*"
