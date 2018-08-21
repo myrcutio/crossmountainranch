@@ -44,6 +44,9 @@ class Admin extends Component {
   }
 
   componentWillMount = async () => {
+    this.setState({
+      isLoading: true
+    })
     this.getPages()
   }
 
