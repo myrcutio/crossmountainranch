@@ -2,7 +2,7 @@ const projectName = require('../../data/aws-exports').codeBuildProject
 const projectBranch = require('../../data/aws-exports').codeBuildBranch
 
 const AWS = require('aws-sdk')
-AWS.config.update({region: 'us-west-2'})
+AWS.config.update({region: 'us-east-1'})
 const codebuild = new AWS.CodeBuild({apiVersion: '2016-10-06'})
 
 module.exports.build = (event, context) => {
