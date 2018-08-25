@@ -19,13 +19,13 @@ export default class ListPagesForm extends Component {
       handleRebuild
     })
 
-    const isRateLimited = parseInt(window.localStorage.getItem('buildRateLimited'))
-    if (isRateLimited >= (new Date()).getTime()){
+    const isRateLimited = window.localStorage.getItem('buildRateLimited')
+    if (isRateLimited !== null && parseInt(isRateLimited) >= (new Date()).getTime()){
       const rateLimitListener = setInterval(async () => {
         this.setState({
           buildStatus: `${statusBadge}&cached=${(new Date()).getTime()}`
         })
-        if (isRateLimited <= (new Date()).getTime()) {
+        if (parseInt(isRateLimited) <= (new Date()).getTime()) {
           clearInterval(rateLimitListener)
         }
       }, 3000)
@@ -41,8 +41,8 @@ export default class ListPagesForm extends Component {
   }
 
   handleRebuild = () => {
-    const isRateLimited = parseInt(window.localStorage.getItem('buildRateLimited'))
-    if (isRateLimited <= (new Date()).getTime()){
+    const isRateLimited = window.localStorage.getItem('buildRateLimited')
+    if (isRateLimited === null || parseInt(isRateLimited) <= (new Date()).getTime()){
       this.state.handleRebuild().then(() => {
         window.localStorage.setItem('buildRateLimited', (new Date()).getTime() + 210000)
         this.setState({
