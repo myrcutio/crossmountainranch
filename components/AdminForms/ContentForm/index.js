@@ -43,6 +43,7 @@ export default class ContentForm extends Component {
   handleOnChange = (field) => (event) => {
     let newValue = _get(event, 'target.value', ' ')
 
+    // MYSQL doesn't update fields with empty values, so setting the value to a space instead
     if (event.target.value.length === 0) {
       newValue = ' '
     }
