@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import fetch from 'isomorphic-fetch'
+import Spinner from '../../Spinner'
 import { statusBadge } from '../../../data/aws-exports'
 
 export default class ListPagesForm extends Component {
@@ -8,7 +8,8 @@ export default class ListPagesForm extends Component {
     handleDelete: () => {},
     handleSelectPage: () => {},
     handleRebuild: () => {},
-    buildStatus: statusBadge
+    buildStatus: statusBadge,
+    isLoading: false
   }
 
   componentWillReceiveProps({ pages, handleDelete, handleSelectPage, handleRebuild}) {
@@ -19,13 +20,13 @@ export default class ListPagesForm extends Component {
       handleRebuild
     })
 
-    const isRateLimited = parseInt(window.localStorage.getItem('buildRateLimited'))
-    if (isRateLimited >= (new Date()).getTime()){
+    const isRateLimited = window.localStorage.getItem('buildRateLimited')
+    if (isRateLimited !== null && parseInt(isRateLimited) >= (new Date()).getTime()){
       const rateLimitListener = setInterval(async () => {
         this.setState({
           buildStatus: `${statusBadge}&cached=${(new Date()).getTime()}`
         })
-        if (isRateLimited <= (new Date()).getTime()) {
+        if (parseInt(isRateLimited) <= (new Date()).getTime()) {
           clearInterval(rateLimitListener)
         }
       }, 3000)
@@ -41,12 +42,16 @@ export default class ListPagesForm extends Component {
   }
 
   handleRebuild = () => {
-    const isRateLimited = parseInt(window.localStorage.getItem('buildRateLimited'))
-    if (isRateLimited <= (new Date()).getTime()){
+    const isRateLimited = window.localStorage.getItem('buildRateLimited')
+    if (isRateLimited === null || parseInt(isRateLimited) <= (new Date()).getTime()){
+      this.setState({
+        isLoading: true
+      })
       this.state.handleRebuild().then(() => {
         window.localStorage.setItem('buildRateLimited', (new Date()).getTime() + 210000)
         this.setState({
-          buildStatus: "https://s3.amazonaws.com/codefactory-us-east-1-prod-default-build-badges/inProgress.svg"
+          buildStatus: "https://s3.amazonaws.com/codefactory-us-east-1-prod-default-build-badges/inProgress.svg",
+          isLoading: false
         })
         setTimeout(() => {
           setInterval(async () => {
@@ -64,6 +69,7 @@ export default class ListPagesForm extends Component {
   render() {
     return (
       <ul>
+        { this.state.isLoading ? <Spinner name="line-scale"/> : null}
         Live Site Build Status: <img src={this.state.buildStatus} /><button onClick={this.handleRebuild}>Update live site (trigger a new build and flush cache)</button>
         { this.state.pages && this.state.pages.length ? this.state.pages.map((p, i) => (
           <li key={i}>
