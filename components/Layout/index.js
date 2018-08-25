@@ -117,7 +117,7 @@ class Layout extends Component {
                   {...this.props}
                   key={`news-${ni}`}
                   table={identifiedRegion.table}
-                  data={region}
+                  data={news}
                   pageId={this.state.pageId}
                   orderId={_get(newsArray, `[${newsArray.length -1}].orderWeight`, 0) + 1}
                 >

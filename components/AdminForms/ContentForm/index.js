@@ -41,10 +41,15 @@ export default class ContentForm extends Component {
   }
 
   handleOnChange = (field) => (event) => {
+    let newValue = _get(event, 'target.value', ' ')
+
+    if (event.target.value.length === 0) {
+      newValue = ' '
+    }
     this.setState({
       data: {
         ...this.state.data,
-        [field]: event.target.value
+        [field]: newValue
       }
     })
   }
