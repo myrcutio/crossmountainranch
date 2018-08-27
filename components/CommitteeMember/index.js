@@ -1,8 +1,8 @@
 export default({ data }) => {
   return (
-    <div className="board-member-list">
-      { data.committeeName ? <h2>{data.committeeName}</h2> : null }
-      <li>{data.fullName}{data.committeePosition ? ', ' + data.committeePosition : ''}</li>
+    <div className={ data.committeeName ? 'committee-section' : '' }>
+      { data.committeeName ? <h2 className="committee-section-label">{data.committeeName}</h2> : null }
+      <div className="committee-member">{data.fullName}{data.committeePosition ? ', ' + data.committeePosition : ''}</div>
     </div>
   )
 }

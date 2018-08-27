@@ -1,0 +1,108 @@
+body
+  position: absolute
+  &.ReactModal__Body--open
+    overflow: hidden
+
+.ReactModal__Overlay
+  z-index: 2
+
+
+// HACK ALERT! This is to hide the SignUp link since cognito does not allow it
+.amplify-section-footer-content div:nth-child(2)
+  display: none !important
+
+.amplify-nav-bar
+  color: white
+  border-color: transparent !important
+
+.adminControls
+  background: white
+  border-radius: 5px
+
+.adminControlledRegion
+  position: relative
+
+.adminControlledRegion .editOverlay:hover
+  background-color: rgba(0, 0, 255, 0.2)
+  cursor: zoom-in
+
+adminControlledRegion .createOverlay
+  z-index: 1
+  position: absolute
+  cursor: copy
+  right: -69px
+  background: white
+  width: 25px
+  border-top-left-radius: 20px
+  border-bottom-left-radius: 20px
+  text-align: right
+  font-weight: bold
+  padding-right: 9px
+
+.adminControlledRegion .createOverlay:hover
+  background-color: rgba(0, 255, 55, .5)
+  position: relative
+  width: calc(100% + 60px)
+  left: 0
+  right: 0
+  text-align: right
+  padding-right: 10px
+  margin-bottom: 10px
+
+.firstRegion .adminControlledRegion:first-of-type .createOverlay:hover
+  top: 16px
+
+.createOverlay
+  right: -70px
+  position: absolute
+  background: white
+  width: 30px
+  text-align: right
+  padding-right: 10px
+  cursor: copy
+  color: green
+  font-weight: 900
+
+.ReactModal__Content
+  max-width: 700px
+
+// Loading Spinner
+@keyframes animation-spinning
+  0%
+    transform: scaleY(1)
+  50%
+    transform: scaleY(0.4)
+  100%
+    transform: scaleY(1)
+
+.sk-spinner
+  display: flex
+  position: fixed
+  top: 0
+  bottom: 0
+  right: 0
+  left: 0
+  background: rgba(50,50,50,0.3)
+  justify-content: center
+  align-items: center
+  z-index: 9
+
+.line-scale>div
+  background-color: rgb(158, 124, 114)
+  border: 1px dotted #ffba8b
+  width: 4px
+  height: 35px
+  display: inline-block
+  margin: 2px
+  border-radius: 2px
+
+.line-scale>div:nth-child(1)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.1s infinite normal both running
+.line-scale>div:nth-child(2)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.2s infinite normal both running
+.line-scale>div:nth-child(3)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.3s infinite normal both running
+.line-scale>div:nth-child(4)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.4s infinite normal both running
+.line-scale>div:nth-child(5)
+  animation: animation-spinning 1s cubic-bezier(0.2, 0.68, 0.18, 1.08) 0.5s infinite normal both running

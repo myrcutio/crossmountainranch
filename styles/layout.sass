@@ -1,0 +1,26 @@
+.content-wrapper
+  width: 960px
+  margin: 0 auto
+
+.main
+  background: rgba(255, 255, 255, 0.9)
+  padding: 30px 30px 0
+  border-radius: 10px 10px 0 0
+  box-shadow: 1px 3px 10px rgba(0, 0, 0, 0.2)
+  display: grid
+  grid-template-columns: 275px 1fr
+  grid-template-rows: 1fr 40px
+  grid-template-areas: 'menu content' 'menu footer'
+
+.main-content
+  grid-area: content
+
+// Not currently using, but there for copyright info, etc.
+.footer
+  // grid-area: footer
+  // align-self: center
+  // justify-self: start
+  font-size: 0.75em
+  color: #f9f9f9
+  text-align: center
+  line-height: 2
