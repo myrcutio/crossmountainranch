@@ -9,12 +9,12 @@ import _find from 'lodash.find'
 import routes from '../../routes.es6'
 
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
-import ListPagesForm from "../../components/AdminForms/ListPagesForm"
+import PageRebuild from "../../components/AdminForms/PageRebuild"
 import Layout from "../../components/Layout"
 import ModalWithHandlers from '../../components/AdminForms/ModalWithHandlers'
 import { prodApiEndpoint } from '../../data/aws-exports'
 import { amplifyConfig } from '../../data/aws-exports'
-import PageRebuild from "../../components/AdminForms/PageRebuild";
+
 
 Amplify.configure(amplifyConfig)
 
