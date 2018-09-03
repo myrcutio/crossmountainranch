@@ -2,17 +2,7 @@ import fetch from 'isomorphic-fetch'
 import { Component } from 'react'
 
 import Amplify, { API, Storage } from 'aws-amplify'
-import {
-  Greetings,
-  SignIn,
-  ConfirmSignIn,
-  RequireNewPassword,
-  SignUp,
-  ConfirmSignUp,
-  VerifyContact,
-  ForgotPassword,
-  TOTPSetup,
-  withAuthenticator } from 'aws-amplify-react'
+import { withAuthenticator } from 'aws-amplify-react'
 import Spinner from '../../components/Spinner'
 import _get from 'lodash.get'
 import _find from 'lodash.find'
@@ -24,6 +14,7 @@ import Layout from "../../components/Layout"
 import ModalWithHandlers from '../../components/AdminForms/ModalWithHandlers'
 import { prodApiEndpoint } from '../../data/aws-exports'
 import { amplifyConfig } from '../../data/aws-exports'
+import PageRebuild from "../../components/AdminForms/PageRebuild";
 
 Amplify.configure(amplifyConfig)
 
@@ -44,7 +35,20 @@ class Admin extends Component {
   }
 
   componentWillMount = async () => {
+    window.addEventListener("hashchange", this.handlePageNavigate, false)
+    this.handlePageNavigate()
+  }
+  componentWillUnmount() {
+    window.removeEventListener("hashchange", this.handlePageNavigate, false);
+  }
+
+  handlePageNavigate = () => {
+    let currentPage = '/'
+    if (location && location.hash) {
+      currentPage = _get(location.hash.split('#'), '[1]', '/')
+    }
     this.setState({
+      currentPage,
       isLoading: true
     })
     this.getPages()
@@ -57,15 +61,33 @@ class Admin extends Component {
     await API.post("ProdAPI", "/page", {
       body: { slug, label }
     })
-    this.getPages()
+    if (location) {
+      location.hash = `#${slug}`
+    } else {
+      this.getPages()
+    }
   }
 
   handleDelete = async (id) => {
+    if (typeof id !== 'number' && this.state.pageId !== null) {
+      id = this.state.pageId
+    } else {
+      console.log('Deleted page id: ', this.state.pageId)
+    }
+    // TODO: add a confirmation modal or alert
     this.setState({
       isLoading: true
     })
-    await API.del("ProdAPI", `/page/${id}`)
-    this.getPages()
+    if (typeof id === 'number' && id !== null) {
+      await API.del("ProdAPI", `/page/${id}`)
+    } else {
+      console.error('Page ID is null')
+    }
+    if (location) {
+      location.hash = `#/`
+    } else {
+      this.getPages()
+    }
   }
 
   getPages = async () => {
@@ -78,7 +100,7 @@ class Admin extends Component {
       regions: {
         [this.state.currentPage]: data.regions
       },
-      pageId: _get(data, 'regions[0].pageId'),
+      pageId: _get(_find(pages, (page) => page.slug === this.state.currentPage), 'id', null),
       siteMap,
       isLoading: false
     })
@@ -150,7 +172,7 @@ class Admin extends Component {
         { this.state.isLoading ? <Spinner name="line-scale"/> : null}
         <div className="adminControls">
           <CreatePageForm handleSubmit={this.handleCreate} />
-          <ListPagesForm pages={this.state.pages} handleSelectPage={this.handleGetPage} handleDelete={this.handleDelete} handleRebuild={this.handleRebuild}/>
+          <PageRebuild handleRebuild={this.handleRebuild}/>
         </div>
         <Layout
           handleUpdate={this.handleContentUpdate}
@@ -163,6 +185,9 @@ class Admin extends Component {
           pageId={this.state.pageId}
           siteMap={this.state.siteMap}
         />
+        {
+          this.state.currentPage === '/' ? null : <button className="deletePageButton" onClick={this.handleDelete}>Delete this page (THIS CANNOT BE UNDONE)</button>
+        }
       </div>
     )
   }

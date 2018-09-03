@@ -1,14 +1,12 @@
 import fetch from 'isomorphic-fetch'
+import _cloneDeep from 'lodash.clonedeep'
 import { prodApiEndpoint } from './data/aws-exports'
+import { staticRoutes } from './staticRoutes'
 
 export default async () => {
   const siteMap = await (await fetch(`${prodApiEndpoint}/routes`)).json()
 
-  const siteURLs = {
-    '/': { page: '/', label: 'Home'},
-    '/contact': { page: '/contact', label: 'Contact'},
-    '/admin': { page: '/admin', label: 'Manage Content', menu: false}
-  }
+  const siteURLs = _cloneDeep(staticRoutes)
 
   siteMap.map(site => siteURLs[`${site.slug}`] = { page: '/', label: site.label})
   return siteURLs

@@ -76,12 +76,7 @@ class Layout extends Component {
   }
 
   switchComponent = (regionArray) => {
-    // Hack alert!
-    // Aggregating news because my data model didn't account for it well enough
-    let newsArray = regionArray.filter(r => r['newsHeadline'])
-    let newsRendered = false
-
-    if ((!regionArray || !regionArray.length || ! _some(regionArray, r => _some(Object.keys(identifyingComponentFields), f => r[f]))) && this.state.adminMode) {
+    if (this.state.adminMode && (!regionArray || !regionArray.length || ! _some(regionArray, r => _some(Object.keys(identifyingComponentFields), f => r[f])))) {
       return (
         <div>
           <ModalWithHandlers
@@ -103,37 +98,6 @@ class Layout extends Component {
         return null
       }
       const RegionComponent = identifiedRegion.component
-
-      // Such hack
-      if (identifiedRegion.table == 'news' && !newsRendered) {
-        newsRendered = true
-        return (
-          <div className="news-feed">
-            <h2>News & Events</h2>
-
-            { _orderBy(newsArray, ['published'], ['asc']).map((news, ni) => {
-              return this.state.adminMode
-                ? <ModalWithHandlers
-                  {...this.props}
-                  key={`news-${ni}`}
-                  table={identifiedRegion.table}
-                  data={news}
-                  pageId={this.state.pageId}
-                  orderId={_get(newsArray, `[${newsArray.length -1}].orderWeight`, 0) + 1}
-                >
-                  <RegionComponent data={news} />
-                </ModalWithHandlers>
-                : (
-                <RegionComponent key={`news-${ni}`} data={news} />
-              )
-            })}
-          </div>
-
-        )
-      } else if (identifiedRegion.table == 'news') {
-        // wow
-        return null
-      }
 
       if (this.state.adminMode) {
         if (i === 0) {
@@ -179,9 +143,10 @@ class Layout extends Component {
 
   render() {
     const regions = this.props.regions || []
+
     return (
       <div className="main">
-        <Menu siteMap={this.props.siteMap} />
+        <Menu siteMap={this.props.siteMap} adminMode={this.state.adminMode} />
 
         <div className="main-content">
           {this.switchComponent(regions)}
