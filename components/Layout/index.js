@@ -5,6 +5,9 @@ import Section from '../Section'
 import Notice from '../Notice'
 import Document from '../Document'
 import CommitteeMember from '../CommitteeMember'
+import Title from '../Title'
+import Disclosure from '../Disclosure'
+import Paragraph from '../Paragraph'
 import ModalWithHandlers from "../AdminForms/ModalWithHandlers"
 import _orderBy from "lodash.orderby"
 import _get from 'lodash.get'
@@ -22,15 +25,15 @@ const identifyingComponentFields = {
   },
   title: {
     table: 'sections',
-    component: Section
+    component: Title
   },
   content: {
     table: 'sections',
-    component: Section
+    component: Paragraph
   },
   disclosure: {
     table: 'sections',
-    component: Section
+    component: Disclosure
   },
   noticeTitle: {
     table: 'notices',
@@ -146,7 +149,7 @@ class Layout extends Component {
 
     return (
       <div className="main">
-        <Menu siteMap={this.props.siteMap} adminMode={this.state.adminMode} />
+        <Menu {...this.props} />
 
         <div className="main-content">
           {this.switchComponent(regions)}
