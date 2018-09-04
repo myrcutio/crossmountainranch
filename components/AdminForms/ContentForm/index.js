@@ -16,11 +16,8 @@ const inputFieldOverrides = {
   pageOrder: {
     hidden: true
   },
-  committeeName: {
-    hidden: true
-  },
-  docTitle: {
-    hidden: true
+  content: {
+    type: 'textarea'
   }
 }
 
@@ -38,7 +35,7 @@ const metaTypes = {
       "disclosure"
     ]
   },
-  section: {
+  paragraph: {
     table: 'sections',
     mappings: [
       "content"
@@ -68,6 +65,7 @@ export default class ContentForm extends Component {
     this.state.handleGet = this.props.handleGet
     this.state.table = this.props.table
     this.state.data = _get(this.props, 'data', {})
+    this.state.metaType = _get(this.props, 'data.componentType', null)
   }
 
   componentWillReceiveProps({ table, data, handleDelete, handleGet, handleCreate, handleUpdate}) {
@@ -77,7 +75,8 @@ export default class ContentForm extends Component {
       handleDelete,
       handleGet,
       handleCreate,
-      handleUpdate
+      handleUpdate,
+      metaType: _get(data, 'componentType', null)
     })
   }
 
@@ -181,6 +180,8 @@ export default class ContentForm extends Component {
             ? <div className="tableChoices">
                 <div>Select content type: </div>
                 <button onClick={this.handleSelectTable('sections', 'title')}>Title</button>
+                <button onClick={this.handleSelectTable('sections', 'disclosure')}>Disclosure</button>
+                <button onClick={this.handleSelectTable('sections', 'paragraph')}>Paragraph</button>
                 <button onClick={this.handleSelectTable('sections')}>Section</button>
                 <button onClick={this.handleSelectTable('news')}>News</button>
                 <button onClick={this.handleSelectTable('documents')}>Document</button>
@@ -205,12 +206,19 @@ export default class ContentForm extends Component {
                     : _get(inputFieldOverrides, `[${mapping}].hidden`) ? null
                     : <div>
                         {mapping}:
-                          <input
-                            name={mapping}
-                            value={_get(this.state.data, mapping, ' ')}
-                            onChange={this.handleOnChange(mapping)}
-                            type={_get(inputFieldOverrides, `[${mapping}].type`, null)}
-                          />
+                        { _get(inputFieldOverrides, `[${mapping}].type`) === 'textarea'
+                          ? <textarea
+                              name={mapping}
+                              value={_get(this.state.data, mapping, ' ')}
+                              onChange={this.handleOnChange(mapping)}
+                            />
+                          : <input
+                              name={mapping}
+                              value={_get(this.state.data, mapping, ' ')}
+                              onChange={this.handleOnChange(mapping)}
+                              type={_get(inputFieldOverrides, `[${mapping}].type`, null)}
+                            />
+                        }
                       </div>
                 }
               </div>
