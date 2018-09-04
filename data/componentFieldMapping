@@ -3,7 +3,7 @@ module.exports = {
     "title",
     "subtitle",
     "disclosure",
-    "content",
+    "content"
   ],
   news: [
     "published",
@@ -29,12 +29,10 @@ module.exports = {
   ],
   documents: [
     "docUrl",
-    "docTitle",
     "docLabel"
   ],
   committeeMembers: [
     "fullName",
-    "committeeName",
     "committeePosition"
   ],
   pages: [

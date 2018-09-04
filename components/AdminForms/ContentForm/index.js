@@ -7,13 +7,49 @@ import { s3FileEndpoint }from '../../../data/aws-exports'
 import tableIds from '../../../data/tableIdMapping'
 
 const inputFieldOverrides = {
-  published: 'date',
-  noticeDate: 'date'
+  published: {
+    type: 'date'
+  },
+  noticeDate: {
+    type: 'date'
+  },
+  pageOrder: {
+    hidden: true
+  },
+  committeeName: {
+    hidden: true
+  },
+  docTitle: {
+    hidden: true
+  }
+}
+
+const metaTypes = {
+  title: {
+    table: 'sections',
+    mappings: [
+      "title",
+      "subtitle"
+    ]
+  },
+  disclosure: {
+    table: 'sections',
+    mappings: [
+      "disclosure"
+    ]
+  },
+  section: {
+    table: 'sections',
+    mappings: [
+      "content"
+    ]
+  }
 }
 
 export default class ContentForm extends Component {
   state = {
     table: '',
+    metaType: null,
     data: {},
     handleDelete: () => {},
     handleGet: () => {},
@@ -73,6 +109,7 @@ export default class ContentForm extends Component {
     let createBody
     if (table === 'pages') {
       createBody = this.cleanupPageField(this.state.data)
+      createBody.pageOrder = this.props.orderId
       table = 'page' // this forces it to use the page api endpoint, not the content table one
     } else {
       createBody = this.state.data
@@ -128,20 +165,22 @@ export default class ContentForm extends Component {
     }
   }
 
-  handleSelectTable = table => () => {
+  handleSelectTable = (table, metaType) => () => {
     this.setState({
-      table
+      table,
+      metaType
     })
   }
 
   render() {
+    const componentFields = _get(metaTypes, `[${this.state.metaType}].mappings`, componentMappings[this.state.table])
     return (
       <ul>
         {
           !this.state.table
             ? <div className="tableChoices">
-                <div>Order Index: {this.props.orderId}</div>
                 <div>Select content type: </div>
+                <button onClick={this.handleSelectTable('sections', 'title')}>Title</button>
                 <button onClick={this.handleSelectTable('sections')}>Section</button>
                 <button onClick={this.handleSelectTable('news')}>News</button>
                 <button onClick={this.handleSelectTable('documents')}>Document</button>
@@ -153,24 +192,24 @@ export default class ContentForm extends Component {
         {
           _get(this.props.data, tableIds[this.state.table])
             ? <div>
-                Current Order Index: {this.props.data.orderWeight}
                 <button onClick={this.handleDelete(_get(this.props.data, tableIds[this.state.table]))}>Delete</button>
               </div>
             : null
         }
         {
-          componentMappings[this.state.table] ? componentMappings[this.state.table].map((mapping, ind) => {
+          componentFields && componentFields.length ? componentFields.map((mapping, ind) => {
             return (
               <div key={ind}>
                 {
                   this.state.table === 'documents' && mapping === 'docUrl' ? <S3ImageUpload storage={this.props.storage} callback={this.handleUploadFile}/>
+                    : _get(inputFieldOverrides, `[${mapping}].hidden`) ? null
                     : <div>
                         {mapping}:
                           <input
                             name={mapping}
                             value={_get(this.state.data, mapping, ' ')}
                             onChange={this.handleOnChange(mapping)}
-                            type={inputFieldOverrides[mapping]}
+                            type={_get(inputFieldOverrides, `[${mapping}].type`, null)}
                           />
                       </div>
                 }
@@ -180,7 +219,7 @@ export default class ContentForm extends Component {
         }
         {
           _get(this.props.data, 'id')
-          ? <button onClick={this.handleUpdate}>Update {`${this.state.table}, id: ${_get(this.props.data, tableIds[this.state.table])}`}</button>
+          ? <button onClick={this.handleUpdate}>Update {this.state.table}</button>
           : this.state.table ? <button onClick={this.handleCreate}>Add new {this.state.table}</button> : null
         }
       </ul>

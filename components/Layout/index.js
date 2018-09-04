@@ -5,6 +5,8 @@ import Section from '../Section'
 import Notice from '../Notice'
 import Document from '../Document'
 import CommitteeMember from '../CommitteeMember'
+import Title from '../Title'
+import Disclosure from '../Disclosure'
 import ModalWithHandlers from "../AdminForms/ModalWithHandlers"
 import _orderBy from "lodash.orderby"
 import _get from 'lodash.get'
@@ -22,7 +24,7 @@ const identifyingComponentFields = {
   },
   title: {
     table: 'sections',
-    component: Section
+    component: Title
   },
   content: {
     table: 'sections',
@@ -30,7 +32,7 @@ const identifyingComponentFields = {
   },
   disclosure: {
     table: 'sections',
-    component: Section
+    component: Disclosure
   },
   noticeTitle: {
     table: 'notices',
