@@ -6,6 +6,11 @@ import S3ImageUpload from "../S3UploadForm"
 import { s3FileEndpoint }from '../../../data/aws-exports'
 import tableIds from '../../../data/tableIdMapping'
 
+const inputFieldOverrides = {
+  published: 'date',
+  noticeDate: 'date'
+}
+
 export default class ContentForm extends Component {
   state = {
     table: '',
@@ -64,15 +69,16 @@ export default class ContentForm extends Component {
   }
 
   handleCreate = async () => {
-    const table = this.state.table
+    let table = this.state.table
     let createBody
-    if (table === 'page') {
+    if (table === 'pages') {
       createBody = this.cleanupPageField(this.state.data)
+      table = 'page' // this forces it to use the page api endpoint, not the content table one
     } else {
       createBody = this.state.data
     }
     const createId = _get(await this.state.handleCreate({table, body: createBody}), 'message.insertId')
-    if (createId && this.props.pageId && table !== 'page') {
+    if (createId && this.props.pageId && table !== 'pages') {
       const pageAssociationParams = {
         table: 'pageContentMaps',
         body: {
@@ -164,6 +170,7 @@ export default class ContentForm extends Component {
                             name={mapping}
                             value={_get(this.state.data, mapping, ' ')}
                             onChange={this.handleOnChange(mapping)}
+                            type={inputFieldOverrides[mapping]}
                           />
                       </div>
                 }

@@ -14,6 +14,7 @@ module.exports = {
   notices: [
     "noticeTitle",
     "noticeDate",
+    "noticeTime",
     "noticeLocation",
     "noticeContent"
   ],
@@ -36,7 +37,7 @@ module.exports = {
     "committeeName",
     "committeePosition"
   ],
-  page: [
+  pages: [
     "slug",
     "label",
     "pageOrder"

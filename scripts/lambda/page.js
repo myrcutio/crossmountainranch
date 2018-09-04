@@ -1,5 +1,6 @@
 const mysql = require('mysql')
 const _get = require('lodash.get')
+const dataSchema = require('../../data/componentFieldMapping')
 const connection = mysql.createConnection({
   host     : process.env.host,
   user     : process.env.user,
@@ -116,7 +117,6 @@ function httpPOST(event, context, callback) {
   }
 
   const eventBody = JSON.parse(_get(event, 'body', '{}'))
-  console.log(eventBody)
   if (!eventBody) {
     context.succeed({
       statusCode: 400,
@@ -130,21 +130,21 @@ function httpPOST(event, context, callback) {
     return;
   }
 
-  const {
-    slug,
-    label
-  } = eventBody
+  const fields = dataSchema['pages'].filter(f => eventBody[f])
 
-  const noticeInsert = `
+  const pageOrderUpdate = `
+    CALL bump_page_order_if_duplicate(${eventBody.pageOrder});
+  `
+  const tableInsert = `
     INSERT INTO content.pages
-    ( slug,
-      label)
+    ( ${fields.join(',')})
     VALUES
-    ( "${slug}",
-      "${label}");
-    `
+    ( ${fields.map(field => `"${eventBody[field]}"`).join(',')} );
+  `
 
-  connection.query(noticeInsert, function (error, res, fields) {
+  const insertQuery = () => connection.query(tableInsert, function (error, res, fields) {
+    if (error) throw error;
+
     let response = {
       headers: {
         'Access-Control-Allow-Origin': '*'
@@ -154,13 +154,10 @@ function httpPOST(event, context, callback) {
       }),
       statusCode: 200
     }
-    if (error) {
-      response.body = JSON.stringify(error)
-      response.statusCode = 500
-    }
-
     context.succeed(response)
   })
+
+  connection.query(pageOrderUpdate, insertQuery)
 }
 
 function httpPUT(event, context, callback) {
@@ -186,13 +183,15 @@ function httpPUT(event, context, callback) {
 
   const {
     slug,
-    label
+    label,
+    pageOrder
   } = eventBody
 
   const pageUpdate = `
     UPDATE content.pages
     SET slug = "${slug}"
     SET label = "${label}"
+    SET pageOrder = "${pageOrder}"
     WHERE (id = ${pageId});
     `
 

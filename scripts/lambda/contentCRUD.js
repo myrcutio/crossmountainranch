@@ -70,8 +70,6 @@ function httpPOST(event, context, callback) {
     return;
   }
 
-  console.log('current event body: ', eventBody)
-
   const fields = dataSchema[dbTable].filter(f => eventBody[f])
 
   const tableOrderUpdate = `

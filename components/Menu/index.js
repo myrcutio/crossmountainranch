@@ -18,7 +18,7 @@ class Menu extends Component {
                     <ModalWithHandlers
                       {...this.props}
                       key={`menuInitCreateModal-${i}`}
-                      table="page"
+                      table="pages"
                       orderId={0}
                     ></ModalWithHandlers>
                   ) : null
@@ -29,8 +29,8 @@ class Menu extends Component {
                 <ModalWithHandlers
                   {...this.props}
                   key={`menuCreateModal-${i}`}
-                  table="page"
-                  orderId={i+1}
+                  table="pages"
+                  orderId={this.props.siteMap[l].pageOrder + 1}
                 ></ModalWithHandlers>
               </div>
             ) : null

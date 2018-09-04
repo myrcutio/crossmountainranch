@@ -61,6 +61,7 @@ CREATE TABLE `notices` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `noticeTitle` VARCHAR(5000) NOT NULL,
   `noticeDate` DATETIME,
+  `noticeTime` VARCHAR(255),
   `noticeLocation` VARCHAR(255),
   `noticeContent` VARCHAR(1000),
   PRIMARY KEY (`id`));
