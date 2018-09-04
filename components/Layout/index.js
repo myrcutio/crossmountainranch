@@ -146,7 +146,7 @@ class Layout extends Component {
 
     return (
       <div className="main">
-        <Menu siteMap={this.props.siteMap} adminMode={this.state.adminMode} />
+        <Menu {...this.props} />
 
         <div className="main-content">
           {this.switchComponent(regions)}

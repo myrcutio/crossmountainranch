@@ -55,10 +55,24 @@ export default class ContentForm extends Component {
     })
   }
 
+  cleanupPageField = (newPageData) => {
+    newPageData.slug = _get(newPageData, 'slug', '').trim()
+    if (!newPageData.slug.startsWith('/')) {
+      newPageData.slug = `/${newPageData.slug}`
+    }
+    return newPageData
+  }
+
   handleCreate = async () => {
     const table = this.state.table
-    const createId = _get(await this.state.handleCreate({table, body: this.state.data}), 'message.insertId')
-    if (createId && this.props.pageId) {
+    let createBody
+    if (table === 'page') {
+      createBody = this.cleanupPageField(this.state.data)
+    } else {
+      createBody = this.state.data
+    }
+    const createId = _get(await this.state.handleCreate({table, body: createBody}), 'message.insertId')
+    if (createId && this.props.pageId && table !== 'page') {
       const pageAssociationParams = {
         table: 'pageContentMaps',
         body: {
@@ -69,7 +83,11 @@ export default class ContentForm extends Component {
       }
       await this.state.handleCreate(pageAssociationParams)
     }
-    this.state.handleGet({table})
+    if (table === 'page') {
+      location.hash = `#${_get(createBody, 'slug', '/')}`
+    } else {
+      this.state.handleGet({table})
+    }
     if (typeof this.props.callback === 'function') {
       this.props.callback()
     }

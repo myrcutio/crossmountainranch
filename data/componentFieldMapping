@@ -35,5 +35,10 @@ module.exports = {
     "fullName",
     "committeeName",
     "committeePosition"
+  ],
+  page: [
+    "slug",
+    "label",
+    "pageOrder"
   ]
 }

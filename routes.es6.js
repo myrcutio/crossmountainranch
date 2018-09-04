@@ -8,6 +8,6 @@ export default async () => {
 
   const siteURLs = _cloneDeep(staticRoutes)
 
-  siteMap.map(site => siteURLs[`${site.slug}`] = { page: '/', label: site.label})
+  siteMap.map(site => siteURLs[`${site.slug}`] = { page: '/', label: site.label, pageOrder: site.pageOrder})
   return siteURLs
 }
