@@ -6,15 +6,14 @@ import { withAuthenticator } from 'aws-amplify-react'
 import Spinner from '../../components/Spinner'
 import _get from 'lodash.get'
 import _find from 'lodash.find'
+import { confirmAlert } from 'react-confirm-alert'
 import routes from '../../routes.es6'
 
 import CreatePageForm from "../../components/AdminForms/CreatePageForm"
 import PageRebuild from "../../components/AdminForms/PageRebuild"
 import Layout from "../../components/Layout"
-import ModalWithHandlers from '../../components/AdminForms/ModalWithHandlers'
 import { prodApiEndpoint } from '../../data/aws-exports'
 import { amplifyConfig } from '../../data/aws-exports'
-
 
 Amplify.configure(amplifyConfig)
 
@@ -89,6 +88,23 @@ class Admin extends Component {
       this.getPages()
     }
   }
+
+  confirmAction = (title, message, callback) => () => {
+    confirmAlert({
+      title,
+      message,
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: callback
+        },
+        {
+          label: 'No',
+          onClick: () => {console.log('abandoned action')}
+        }
+      ]
+    })
+  };
 
   getPages = async () => {
     const pages = await (await fetch(`${prodApiEndpoint}/routes`)).json()
@@ -171,7 +187,6 @@ class Admin extends Component {
       <div>
         { this.state.isLoading ? <Spinner name="line-scale"/> : null}
         <div className="adminControls">
-          <CreatePageForm handleSubmit={this.handleCreate} />
           <PageRebuild handleRebuild={this.handleRebuild}/>
         </div>
         <Layout
@@ -186,7 +201,7 @@ class Admin extends Component {
           siteMap={this.state.siteMap}
         />
         {
-          this.state.currentPage === '/' ? null : <button className="deletePageButton" onClick={this.handleDelete}>Delete this page (THIS CANNOT BE UNDONE)</button>
+          this.state.currentPage === '/' ? null : <button className="deletePageButton" onClick={this.confirmAction('Permanently delete page', 'This action cannot be undone, are you sure?', this.handleDelete)}>Delete this page (THIS CANNOT BE UNDONE)</button>
         }
       </div>
     )

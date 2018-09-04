@@ -68,7 +68,7 @@ class ModalWithHandlers extends Component {
           <ContentForm
             {...this.props}
             data={null}
-            table={null}
+            table={this.props.table === 'pages' ? 'pages' : null}
             callback={this.closeCreateModal}
           />
         </Modal>

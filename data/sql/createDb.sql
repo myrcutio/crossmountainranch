@@ -6,6 +6,7 @@ CREATE TABLE `pages` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `slug` VARCHAR(750) NOT NULL UNIQUE COMMENT 'Url slug for a given page',
   `label` VARCHAR(255) NOT NULL,
+  `pageOrder` INT,
   PRIMARY KEY (`id`));
 
 CREATE TABLE `pageContentMaps` (
@@ -60,6 +61,7 @@ CREATE TABLE `notices` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `noticeTitle` VARCHAR(5000) NOT NULL,
   `noticeDate` DATETIME,
+  `noticeTime` VARCHAR(255),
   `noticeLocation` VARCHAR(255),
   `noticeContent` VARCHAR(1000),
   PRIMARY KEY (`id`));

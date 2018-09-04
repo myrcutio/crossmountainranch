@@ -6,9 +6,47 @@ import S3ImageUpload from "../S3UploadForm"
 import { s3FileEndpoint }from '../../../data/aws-exports'
 import tableIds from '../../../data/tableIdMapping'
 
+const inputFieldOverrides = {
+  published: {
+    type: 'date'
+  },
+  noticeDate: {
+    type: 'date'
+  },
+  pageOrder: {
+    hidden: true
+  },
+  content: {
+    type: 'textarea'
+  }
+}
+
+const metaTypes = {
+  title: {
+    table: 'sections',
+    mappings: [
+      "title",
+      "subtitle"
+    ]
+  },
+  disclosure: {
+    table: 'sections',
+    mappings: [
+      "disclosure"
+    ]
+  },
+  paragraph: {
+    table: 'sections',
+    mappings: [
+      "content"
+    ]
+  }
+}
+
 export default class ContentForm extends Component {
   state = {
     table: '',
+    metaType: null,
     data: {},
     handleDelete: () => {},
     handleGet: () => {},
@@ -27,6 +65,7 @@ export default class ContentForm extends Component {
     this.state.handleGet = this.props.handleGet
     this.state.table = this.props.table
     this.state.data = _get(this.props, 'data', {})
+    this.state.metaType = _get(this.props, 'data.componentType', null)
   }
 
   componentWillReceiveProps({ table, data, handleDelete, handleGet, handleCreate, handleUpdate}) {
@@ -36,7 +75,8 @@ export default class ContentForm extends Component {
       handleDelete,
       handleGet,
       handleCreate,
-      handleUpdate
+      handleUpdate,
+      metaType: _get(data, 'componentType', null)
     })
   }
 
@@ -55,10 +95,26 @@ export default class ContentForm extends Component {
     })
   }
 
+  cleanupPageField = (newPageData) => {
+    newPageData.slug = _get(newPageData, 'slug', '').trim()
+    if (!newPageData.slug.startsWith('/')) {
+      newPageData.slug = `/${newPageData.slug}`
+    }
+    return newPageData
+  }
+
   handleCreate = async () => {
-    const table = this.state.table
-    const createId = _get(await this.state.handleCreate({table, body: this.state.data}), 'message.insertId')
-    if (createId && this.props.pageId) {
+    let table = this.state.table
+    let createBody
+    if (table === 'pages') {
+      createBody = this.cleanupPageField(this.state.data)
+      createBody.pageOrder = this.props.orderId
+      table = 'page' // this forces it to use the page api endpoint, not the content table one
+    } else {
+      createBody = this.state.data
+    }
+    const createId = _get(await this.state.handleCreate({table, body: createBody}), 'message.insertId')
+    if (createId && this.props.pageId && table !== 'pages') {
       const pageAssociationParams = {
         table: 'pageContentMaps',
         body: {
@@ -69,7 +125,11 @@ export default class ContentForm extends Component {
       }
       await this.state.handleCreate(pageAssociationParams)
     }
-    this.state.handleGet({table})
+    if (table === 'page') {
+      location.hash = `#${_get(createBody, 'slug', '/')}`
+    } else {
+      this.state.handleGet({table})
+    }
     if (typeof this.props.callback === 'function') {
       this.props.callback()
     }
@@ -104,20 +164,24 @@ export default class ContentForm extends Component {
     }
   }
 
-  handleSelectTable = table => () => {
+  handleSelectTable = (table, metaType) => () => {
     this.setState({
-      table
+      table,
+      metaType
     })
   }
 
   render() {
+    const componentFields = _get(metaTypes, `[${this.state.metaType}].mappings`, componentMappings[this.state.table])
     return (
       <ul>
         {
           !this.state.table
             ? <div className="tableChoices">
-                <div>Order Index: {this.props.orderId}</div>
                 <div>Select content type: </div>
+                <button onClick={this.handleSelectTable('sections', 'title')}>Title</button>
+                <button onClick={this.handleSelectTable('sections', 'disclosure')}>Disclosure</button>
+                <button onClick={this.handleSelectTable('sections', 'paragraph')}>Paragraph</button>
                 <button onClick={this.handleSelectTable('sections')}>Section</button>
                 <button onClick={this.handleSelectTable('news')}>News</button>
                 <button onClick={this.handleSelectTable('documents')}>Document</button>
@@ -129,24 +193,32 @@ export default class ContentForm extends Component {
         {
           _get(this.props.data, tableIds[this.state.table])
             ? <div>
-                Current Order Index: {this.props.data.orderWeight}
                 <button onClick={this.handleDelete(_get(this.props.data, tableIds[this.state.table]))}>Delete</button>
               </div>
             : null
         }
         {
-          componentMappings[this.state.table] ? componentMappings[this.state.table].map((mapping, ind) => {
+          componentFields && componentFields.length ? componentFields.map((mapping, ind) => {
             return (
               <div key={ind}>
                 {
                   this.state.table === 'documents' && mapping === 'docUrl' ? <S3ImageUpload storage={this.props.storage} callback={this.handleUploadFile}/>
+                    : _get(inputFieldOverrides, `[${mapping}].hidden`) ? null
                     : <div>
                         {mapping}:
-                          <input
-                            name={mapping}
-                            value={_get(this.state.data, mapping, ' ')}
-                            onChange={this.handleOnChange(mapping)}
-                          />
+                        { _get(inputFieldOverrides, `[${mapping}].type`) === 'textarea'
+                          ? <textarea
+                              name={mapping}
+                              value={_get(this.state.data, mapping, ' ')}
+                              onChange={this.handleOnChange(mapping)}
+                            />
+                          : <input
+                              name={mapping}
+                              value={_get(this.state.data, mapping, ' ')}
+                              onChange={this.handleOnChange(mapping)}
+                              type={_get(inputFieldOverrides, `[${mapping}].type`, null)}
+                            />
+                        }
                       </div>
                 }
               </div>
@@ -155,7 +227,7 @@ export default class ContentForm extends Component {
         }
         {
           _get(this.props.data, 'id')
-          ? <button onClick={this.handleUpdate}>Update {`${this.state.table}, id: ${_get(this.props.data, tableIds[this.state.table])}`}</button>
+          ? <button onClick={this.handleUpdate}>Update {this.state.table}</button>
           : this.state.table ? <button onClick={this.handleCreate}>Add new {this.state.table}</button> : null
         }
       </ul>
