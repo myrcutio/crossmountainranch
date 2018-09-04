@@ -21,6 +21,15 @@ const inputFieldOverrides = {
   content: {
     type: 'textarea'
   },
+  disclosure: {
+    type: 'textarea'
+  },
+  newsContent: {
+    type: 'textarea'
+  },
+  noticeContent: {
+    type: 'textarea'
+  },
   markdown: {
     type: 'markdown'
   }
@@ -30,8 +39,7 @@ const metaTypes = {
   title: {
     table: 'sections',
     mappings: [
-      "title",
-      "subtitle"
+      "title"
     ]
   },
   disclosure: {
@@ -236,15 +244,15 @@ export default class ContentForm extends Component {
           !this.state.table
             ? <div className="tableChoices">
                 <div>Select content type: </div>
-                <button onClick={this.handleSelectTable('sections', 'title')}>Title</button>
-                <button onClick={this.handleSelectTable('sections', 'disclosure')}>Disclosure</button>
-                <button onClick={this.handleSelectTable('sections', 'paragraph')}>Paragraph</button>
-                <button onClick={this.handleSelectTable('news', 'news')}>News</button>
-                <button onClick={this.handleSelectTable('documents', 'document')}>Document</button>
-                <button onClick={this.handleSelectTable('notices', 'notice')}>Notice</button>
-                <button onClick={this.handleSelectTable('emails', 'email')}>Email</button>
-                <button onClick={this.handleSelectTable('committeeMembers', 'committeeMember')}>Committee Member</button>
-                <button onClick={this.handleSelectTable('markdownBlocks', 'markdownBlock')}>Markdown Block</button>
+                <div><div className="section-type" onClick={this.handleSelectTable('sections', 'title')}>Title</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('sections', 'disclosure')}>Disclosure</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('sections', 'paragraph')}>Paragraph</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('news', 'news')}>News</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('documents', 'document')}>Document</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('notices', 'notice')}>Notice</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('emails', 'email')}>Email</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('committeeMembers', 'committeeMember')}>Committee Member</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('markdownBlocks', 'markdownBlock')}>Markdown Block</div></div>
               </div>
             : null
         }
@@ -263,9 +271,10 @@ export default class ContentForm extends Component {
                   this.state.table === 'documents' && mapping === 'docUrl' ? <S3ImageUpload storage={this.props.storage} callback={this.handleUploadFile}/>
                     : _get(inputFieldOverrides, `[${mapping}].hidden`) ? null
                     : <div>
-                        {mapping}:
+                        <span className="section-label">{mapping}:</span>
                         { _get(inputFieldOverrides, `[${mapping}].type`) === 'textarea'
                           ? <textarea
+                              rows="8"
                               name={mapping}
                               value={_get(this.state.data, mapping, ' ')}
                               onChange={this.handleOnChange(mapping)}
@@ -281,7 +290,7 @@ export default class ContentForm extends Component {
                               name={mapping}
                               value={_get(this.state.data, mapping, ' ')}
                               onChange={this.handleOnChange(mapping)}
-                              type={_get(inputFieldOverrides, `[${mapping}].type`, null)}
+                              type={_get(inputFieldOverrides, `[${mapping}].type`, "text")}
                             />
                         }
                       </div>
@@ -292,8 +301,13 @@ export default class ContentForm extends Component {
         }
         {
           _get(this.props.data, 'id')
-          ? <button onClick={this.handleUpdate}>Update {this.state.table}</button>
-          : this.state.table ? <button onClick={this.handleCreate}>Add new {this.state.table}</button> : null
+          ? <button className="add-update-section" onClick={this.handleUpdate}>Update {this.state.table}</button>
+          : this.state.table ? <button className="add-update-section" onClick={this.handleCreate}>Add new {this.state.table}</button> : null
+        }
+        {
+          _get(this.props.data, tableIds[this.state.table])
+            ? <button className="delete-section" onClick={this.handleDelete(_get(this.props.data, tableIds[this.state.table]))}>Delete</button>
+            : null
         }
       </ul>
     )

@@ -186,9 +186,6 @@ class Admin extends Component {
     return (
       <div>
         { this.state.isLoading ? <Spinner name="line-scale"/> : null}
-        <div className="adminControls">
-          <PageRebuild handleRebuild={this.handleRebuild}/>
-        </div>
         <Layout
           handleUpdate={this.handleContentUpdate}
           handleCreate={this.handleContentCreate}
@@ -200,6 +197,7 @@ class Admin extends Component {
           pageId={this.state.pageId}
           siteMap={this.state.siteMap}
         />
+        <PageRebuild handleRebuild={this.handleRebuild}/>
         {
           this.state.currentPage === '/' ? null : <button className="deletePageButton" onClick={this.confirmAction('Permanently delete page', 'This action cannot be undone, are you sure?', this.handleDelete)}>Delete this page (THIS CANNOT BE UNDONE)</button>
         }
