@@ -50,7 +50,7 @@ class ModalWithHandlers extends Component {
           contentLabel="Edit Region Contents"
         >
           <h2 ref={subtitle => this.subtitle = subtitle}></h2>
-          <button onClick={this.closeEditModal}>X</button>
+          <span className="close-modal-x" onClick={this.closeEditModal}>+</span>
           <ContentForm
             {...this.props}
 
@@ -64,7 +64,7 @@ class ModalWithHandlers extends Component {
           contentLabel="Add New Region"
         >
           <h2 ref={subtitle => this.subtitle = subtitle}></h2>
-          <button onClick={this.closeCreateModal}>X</button>
+          <span className="close-modal-x" onClick={this.closeCreateModal}>+</span>
           <ContentForm
             {...this.props}
             data={null}
@@ -76,7 +76,7 @@ class ModalWithHandlers extends Component {
           {this.props.children}
         </div>
         <div className="createOverlay" onClick={this.openCreateModal}>
-          +
+          <span className="new-section-label"></span> +
         </div>
       </div>
     );

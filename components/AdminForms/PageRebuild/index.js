@@ -54,9 +54,12 @@ export default class PageRebuild extends Component {
 
   render() {
     return (
-      <div>
+      <div className="build-status">
         { this.state.isLoading ? <Spinner name="line-scale"/> : null}
-        Live Site Build Status: <img src={this.state.buildStatus} /><button onClick={this.handleRebuild}>Update live site (trigger a new build and flush cache)</button>
+        Build Status: <img src={this.state.buildStatus} />
+        <div>
+          <button className="updateSiteButton" onClick={this.handleRebuild}>Update live site with ALL changes to ALL pages (THIS CANNOT BE UNDONE)</button>
+        </div>
       </div>
     )
   }

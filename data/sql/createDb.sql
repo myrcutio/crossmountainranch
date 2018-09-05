@@ -15,15 +15,19 @@ CREATE TABLE `pageContentMaps` (
   `sectionId` INT,
   `committeeMemberId` INT,
   `documentId` INT,
+  `emailId` INT,
   `newsId` INT,
   `noticeId` INT,
+  `markdownId` INT,
   `orderWeight` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `page` (`pageId` ASC),
   CONSTRAINT `sections` UNIQUE (`pageId`, `sectionId`),
   CONSTRAINT `committeeMembers` UNIQUE (`pageId`, `committeeMemberId`),
+  CONSTRAINT `emails` UNIQUE (`pageId`, `emailId`),
   CONSTRAINT `newsArticles` UNIQUE (`pageId`, `newsId`),
   CONSTRAINT `notices` UNIQUE (`pageId`, `noticeId`),
+  CONSTRAINT `markdownBlocks` UNIQUE (`pageId`, `markdownId`),
   CONSTRAINT `documents` UNIQUE (`pageId`, `documentId`));
 
 CREATE TABLE `sections` (
@@ -48,6 +52,11 @@ CREATE TABLE `documents` (
   `docLabel` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`));
 
+CREATE TABLE `emails` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (`id`));
+
 CREATE TABLE `news` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `published` DATETIME,
@@ -56,6 +65,11 @@ CREATE TABLE `news` (
   `newsContent` VARCHAR(10000) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `publishedDate` (`published` DESC));
+
+CREATE TABLE `markdownBlocks` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `markdown` VARCHAR(10000) NOT NULL,
+  PRIMARY KEY (`id`));
 
 CREATE TABLE `notices` (
   `id` INT NOT NULL AUTO_INCREMENT,
