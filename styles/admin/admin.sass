@@ -6,7 +6,6 @@ body
 .ReactModal__Overlay
   z-index: 2
 
-
 // HACK ALERT! This is to hide the SignUp link since cognito does not allow it
 .amplify-section-footer-content div:nth-child(2)
   display: none !important
@@ -65,7 +64,7 @@ adminControlledRegion .createOverlay
   top: 0
 
 .createOverlay
-  right: -70px
+  right: -60px
   position: absolute
   background: rgba(255, 255, 255, 0.9)
   width: 30px
@@ -81,16 +80,16 @@ adminControlledRegion .createOverlay
       content: 'Add New Section'
 
 .menu .createOverlay
-  left: -70px
+  left: -60px
   top: -7px
   margin-top: 7px
   margin-bottom: 7px
 
 .menu .createOverlay:hover
-  left: -70px
+  left: -60px
   top: 0
   text-align: left
-  padding-left: 22px
+  padding-left: 10px
   width: 100%
   .new-section-label
     float: right
@@ -156,6 +155,7 @@ adminControlledRegion .createOverlay
 .section-label
   display: block
   margin-top: 10px
+  text-transform: capitalize
 
 .add-update-section,
 .delete-section

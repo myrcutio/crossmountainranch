@@ -1,5 +1,7 @@
 import { Component } from 'react'
 import _get from 'lodash.get'
+import ReactMde from "react-mde"
+import * as Showdown from "showdown"
 
 import componentMappings from '../../../data/componentFieldMapping'
 import S3ImageUpload from "../S3UploadForm"
@@ -8,25 +10,58 @@ import tableIds from '../../../data/tableIdMapping'
 
 const inputFieldOverrides = {
   published: {
-    type: 'date'
+    type: 'date',
+    label: 'Date'
   },
-  noticeDate: {
-    type: 'date'
+  docLabel: {
+    label: 'Document Name'
   },
   pageOrder: {
     hidden: true
   },
+  fullName: {
+    label: 'Member Name'
+  },
+  committeePosition: {
+    label: 'Committee Position'
+  },
   content: {
-    type: 'textarea'
+    type: 'textarea',
+    label: 'Paragraph'
   },
   disclosure: {
     type: 'textarea'
   },
+  newsHeadline: {
+    label: 'Headline'
+  },
+  newsSubtitle: {
+    label: 'Subtitle'
+  },
   newsContent: {
-    type: 'textarea'
+    type: 'textarea',
+    label: 'Details'
   },
   noticeContent: {
-    type: 'textarea'
+    type: 'textarea',
+    label: 'Details'
+  },
+  noticeTitle: {
+    label: 'Summary'
+  },
+  noticeDate: {
+    type: 'date',
+    label: 'Date'
+  },
+  noticeTime: {
+    label: 'Time'
+  },
+  noticeLocation: {
+    label: 'Location'
+  },
+  markdown: {
+    type: 'markdown',
+    label: 'Markdown Content'
   }
 }
 
@@ -35,23 +70,55 @@ const metaTypes = {
     table: 'sections',
     mappings: [
       "title"
-    ]
+    ],
+    label: 'Title'
   },
   disclosure: {
     table: 'sections',
     mappings: [
       "disclosure"
-    ]
+    ],
+    label: 'Disclosure'
+  },
+  email: {
+    table: 'emails',
+    mappings: [
+      "email"
+    ],
+    label: 'Email'
   },
   paragraph: {
     table: 'sections',
     mappings: [
       "content"
-    ]
+    ],
+    label: 'Paragraph'
+  },
+  news: {
+    table: 'news',
+    mappings: componentMappings['news'],
+    label: 'News Item'
+  },
+  notice: {
+    table: 'notices',
+    mappings: componentMappings['notices'],
+    label: 'Notice'
+  },
+  committeeMember: {
+    table: 'committeeMembers',
+    mappings: componentMappings['committeeMembers'],
+    label: 'Committee Member'
+  },
+  markdownBlock: {
+    table: 'markdownBlocks',
+    mappings: componentMappings['markdownBlocks'],
+    label: 'Markdown Block'
   }
 }
 
 export default class ContentForm extends Component {
+  converter = Showdown.Converter
+
   state = {
     table: '',
     metaType: null,
@@ -62,7 +129,10 @@ export default class ContentForm extends Component {
     handleUpdate: () => {},
     handleOnChange: () => {},
     focusedHandler: () => {},
-    isLoading: false
+    isLoading: false,
+    mdeState: {
+      markdown: ''
+    }
   }
 
   constructor(props) {
@@ -73,10 +143,22 @@ export default class ContentForm extends Component {
     this.state.handleGet = this.props.handleGet
     this.state.table = this.props.table
     this.state.data = _get(this.props, 'data', {})
+    if (this.props.data && this.props.data.markdown) {
+      this.state.mdeState = {
+        markdown: this.props.data.markdown
+      }
+    }
     this.state.metaType = _get(this.props, 'data.componentType', null)
+    this.converter = new Showdown.Converter({tables: true, simplifiedAutoLink: true})
   }
 
   componentWillReceiveProps({ table, data, handleDelete, handleGet, handleCreate, handleUpdate}) {
+    let mdeState = {
+      markdown: ''
+    }
+    if (data && data.markdown) {
+      mdeState.markdown = data.markdown
+    }
     this.setState({
       table,
       data,
@@ -84,6 +166,9 @@ export default class ContentForm extends Component {
       handleGet,
       handleCreate,
       handleUpdate,
+      mdeState: {
+        ...mdeState
+      },
       metaType: _get(data, 'componentType', null)
     })
   }
@@ -103,6 +188,16 @@ export default class ContentForm extends Component {
     })
   }
 
+  handleMarkdownChange = (mdeState) => {
+    this.setState({
+      mdeState,
+      data: {
+        ...this.state.data,
+        markdown: mdeState.markdown
+      }
+    })
+  }
+
   cleanupPageField = (newPageData) => {
     newPageData.slug = _get(newPageData, 'slug', '').trim()
     if (!newPageData.slug.startsWith('/')) {
@@ -112,6 +207,7 @@ export default class ContentForm extends Component {
   }
 
   handleCreate = async () => {
+    const componentType = this.state.metaType
     let table = this.state.table
     let createBody
     if (table === 'pages') {
@@ -128,7 +224,8 @@ export default class ContentForm extends Component {
         body: {
           pageId: this.props.pageId,
           [tableIds[table]]: createId,
-          orderWeight: this.props.orderId
+          orderWeight: this.props.orderId,
+          componentType
         }
       }
       await this.state.handleCreate(pageAssociationParams)
@@ -182,18 +279,20 @@ export default class ContentForm extends Component {
   render() {
     const componentFields = _get(metaTypes, `[${this.state.metaType}].mappings`, componentMappings[this.state.table])
     return (
-      <ul>
+      <div>
         {
           !this.state.table
             ? <div className="tableChoices">
-                <h2>Select content type:</h2>
+                <div>Select content type: </div>
                 <div><div className="section-type" onClick={this.handleSelectTable('sections', 'title')}>Title</div></div>
                 <div><div className="section-type" onClick={this.handleSelectTable('sections', 'disclosure')}>Disclosure</div></div>
                 <div><div className="section-type" onClick={this.handleSelectTable('sections', 'paragraph')}>Paragraph</div></div>
-                <div><div className="section-type" onClick={this.handleSelectTable('news')}>News</div></div>
-                <div><div className="section-type" onClick={this.handleSelectTable('documents')}>Document</div></div>
-                <div><div className="section-type" onClick={this.handleSelectTable('notices')}>Notice</div></div>
-                <div><div className="section-type" onClick={this.handleSelectTable('committeeMembers')}>Committee Member</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('news', 'news')}>News</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('documents', 'document')}>Document</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('notices', 'notice')}>Notice</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('emails', 'email')}>Email</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('committeeMembers', 'committeeMember')}>Committee Member</div></div>
+                <div><div className="section-type" onClick={this.handleSelectTable('markdownBlocks', 'markdownBlock')}>Markdown Block</div></div>
               </div>
             : null
         }
@@ -205,7 +304,7 @@ export default class ContentForm extends Component {
                   this.state.table === 'documents' && mapping === 'docUrl' ? <S3ImageUpload storage={this.props.storage} callback={this.handleUploadFile}/>
                     : _get(inputFieldOverrides, `[${mapping}].hidden`) ? null
                     : <div>
-                        <span className="section-label">{mapping}:</span>
+                        <span className="section-label">{_get(inputFieldOverrides, `[${mapping}].label`, mapping)}</span>
                         { _get(inputFieldOverrides, `[${mapping}].type`) === 'textarea'
                           ? <textarea
                               rows="8"
@@ -213,9 +312,16 @@ export default class ContentForm extends Component {
                               value={_get(this.state.data, mapping, ' ')}
                               onChange={this.handleOnChange(mapping)}
                             />
-                          : <input
+                          : _get(inputFieldOverrides, `[${mapping}].type`) === 'markdown'
+                            ? <ReactMde
+                                onChange={this.handleMarkdownChange}
+                                editorState={this.state.mdeState}
+                                layout="horizontal"
+                                generateMarkdownPreview={(markdown) => Promise.resolve(this.converter.makeHtml(markdown))}
+                              />
+                            : <input
                               name={mapping}
-                              value={_get(this.state.data, mapping, ' ')}
+                              value={_get(inputFieldOverrides, `[${mapping}].type`) === 'date' ? _get(this.state.data, mapping, 'T').split('T')[0] : _get(this.state.data, mapping, ' ')}
                               onChange={this.handleOnChange(mapping)}
                               type={_get(inputFieldOverrides, `[${mapping}].type`, "text")}
                             />
@@ -228,15 +334,15 @@ export default class ContentForm extends Component {
         }
         {
           _get(this.props.data, 'id')
-          ? <button className="add-update-section" onClick={this.handleUpdate}>Update {this.state.table}</button>
-          : this.state.table ? <button className="add-update-section" onClick={this.handleCreate}>Add new {this.state.table}</button> : null
+          ? <button className="add-update-section" onClick={this.handleUpdate}>Update {_get(metaTypes, `[${this.state.metaType}].label`, this.state.table)}</button>
+          : this.state.table ? <button className="add-update-section" onClick={this.handleCreate}>Add new {_get(metaTypes, `[${this.state.metaType}].label`, this.state.table)}</button> : null
         }
         {
           _get(this.props.data, tableIds[this.state.table])
             ? <button className="delete-section" onClick={this.handleDelete(_get(this.props.data, tableIds[this.state.table]))}>Delete</button>
             : null
         }
-      </ul>
+      </div>
     )
   }
 }

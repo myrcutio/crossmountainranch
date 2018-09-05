@@ -1,9 +1,17 @@
 module.exports = {
-  sections: [
-    "title",
-    "subtitle",
-    "disclosure",
-    "content"
+  committeeMembers: [
+    "fullName",
+    "committeePosition"
+  ],
+  documents: [
+    "docUrl",
+    "docLabel"
+  ],
+  emails: [
+    "email"
+  ],
+  markdownBlocks: [
+    "markdown"
   ],
   news: [
     "published",
@@ -18,26 +26,27 @@ module.exports = {
     "noticeLocation",
     "noticeContent"
   ],
+  pages: [
+    "slug",
+    "label",
+    "pageOrder"
+  ],
   pageContentMaps: [
     "pageId",
     "sectionId",
     "committeeMemberId",
     "documentId",
+    "emailId",
     "newsId",
     "noticeId",
-    "orderWeight"
+    "markdownId",
+    "orderWeight",
+    "componentType"
   ],
-  documents: [
-    "docUrl",
-    "docLabel"
+  sections: [
+    "title",
+    "subtitle",
+    "disclosure",
+    "content"
   ],
-  committeeMembers: [
-    "fullName",
-    "committeePosition"
-  ],
-  pages: [
-    "slug",
-    "label",
-    "pageOrder"
-  ]
 }

@@ -23,8 +23,10 @@ function httpGET(event, context, callback) {
     LEFT JOIN content.sections on pcm.sectionId = content.sections.id
     LEFT JOIN content.committeeMembers on pcm.committeeMEmberId = content.committeeMembers.id
     LEFT JOIN content.documents on pcm.documentId = content.documents.id
+    LEFT JOIN content.emails on pcm.emailId = content.emails.id
     LEFT JOIN content.news on pcm.newsId = content.news.id
     LEFT JOIN content.notices on pcm.noticeId = content.notices.id
+    LEFT JOIN content.markdownBlocks on pcm.markdownId = content.markdownBlocks.id
     LEFT JOIN content.pages on pcm.pageId = content.pages.id
     WHERE content.pages.slug = ${JSON.stringify(slug)}
     ORDER BY pcm.orderWeight ASC
