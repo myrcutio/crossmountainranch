@@ -321,7 +321,7 @@ export default class ContentForm extends Component {
                               />
                             : <input
                               name={mapping}
-                              value={_get(this.state.data, mapping, ' ')}
+                              value={_get(inputFieldOverrides, `[${mapping}].type`) === 'date' ? _get(this.state.data, mapping, 'T').split('T')[0] : _get(this.state.data, mapping, ' ')}
                               onChange={this.handleOnChange(mapping)}
                               type={_get(inputFieldOverrides, `[${mapping}].type`, "text")}
                             />
