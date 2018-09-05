@@ -9,7 +9,6 @@ import _find from 'lodash.find'
 import { confirmAlert } from 'react-confirm-alert'
 import routes from '../../routes.es6'
 
-import CreatePageForm from "../../components/AdminForms/CreatePageForm"
 import PageRebuild from "../../components/AdminForms/PageRebuild"
 import Layout from "../../components/Layout"
 import { prodApiEndpoint } from '../../data/aws-exports'

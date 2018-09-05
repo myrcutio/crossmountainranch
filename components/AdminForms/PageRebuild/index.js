@@ -54,7 +54,7 @@ export default class PageRebuild extends Component {
 
   render() {
     return (
-      <div class="build-status">
+      <div className="build-status">
         { this.state.isLoading ? <Spinner name="line-scale"/> : null}
         Build Status: <img src={this.state.buildStatus} />
         <div>
