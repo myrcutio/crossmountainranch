@@ -1,5 +1,7 @@
 import { Component } from 'react'
 import _get from 'lodash.get'
+import ReactMde from "react-mde"
+import * as Showdown from "showdown"
 
 import componentMappings from '../../../data/componentFieldMapping'
 import S3ImageUpload from "../S3UploadForm"
@@ -18,6 +20,9 @@ const inputFieldOverrides = {
   },
   content: {
     type: 'textarea'
+  },
+  markdown: {
+    type: 'markdown'
   }
 }
 
@@ -35,15 +40,39 @@ const metaTypes = {
       "disclosure"
     ]
   },
+  email: {
+    table: 'emails',
+    mappings: [
+      "email"
+    ]
+  },
   paragraph: {
     table: 'sections',
     mappings: [
       "content"
     ]
+  },
+  news: {
+    table: 'news',
+    mappings: componentMappings['news']
+  },
+  notice: {
+    table: 'notices',
+    mappings: componentMappings['notices']
+  },
+  committeeMember: {
+    table: 'committeeMembers',
+    mappings: componentMappings['committeeMembers']
+  },
+  markdownBlock: {
+    table: 'markdownBlocks',
+    mappings: componentMappings['markdownBlocks']
   }
 }
 
 export default class ContentForm extends Component {
+  converter = Showdown.Converter
+
   state = {
     table: '',
     metaType: null,
@@ -54,7 +83,10 @@ export default class ContentForm extends Component {
     handleUpdate: () => {},
     handleOnChange: () => {},
     focusedHandler: () => {},
-    isLoading: false
+    isLoading: false,
+    mdeState: {
+      markdown: '**Hello world!**'
+    }
   }
 
   constructor(props) {
@@ -65,10 +97,22 @@ export default class ContentForm extends Component {
     this.state.handleGet = this.props.handleGet
     this.state.table = this.props.table
     this.state.data = _get(this.props, 'data', {})
+    if (this.props.data && this.props.data.markdown) {
+      this.state.mdeState = {
+        markdown: this.props.data.markdown
+      }
+    }
     this.state.metaType = _get(this.props, 'data.componentType', null)
+    this.converter = new Showdown.Converter({tables: true, simplifiedAutoLink: true})
   }
 
   componentWillReceiveProps({ table, data, handleDelete, handleGet, handleCreate, handleUpdate}) {
+    let mdeState = {
+      markdown: ''
+    }
+    if (data && data.markdown) {
+      mdeState.markdown = data.markdown
+    }
     this.setState({
       table,
       data,
@@ -76,6 +120,9 @@ export default class ContentForm extends Component {
       handleGet,
       handleCreate,
       handleUpdate,
+      mdeState: {
+        ...mdeState
+      },
       metaType: _get(data, 'componentType', null)
     })
   }
@@ -91,6 +138,16 @@ export default class ContentForm extends Component {
       data: {
         ...this.state.data,
         [field]: newValue
+      }
+    })
+  }
+
+  handleMarkdownChange = (mdeState) => {
+    this.setState({
+      mdeState,
+      data: {
+        ...this.state.data,
+        markdown: mdeState.markdown
       }
     })
   }
@@ -182,11 +239,12 @@ export default class ContentForm extends Component {
                 <button onClick={this.handleSelectTable('sections', 'title')}>Title</button>
                 <button onClick={this.handleSelectTable('sections', 'disclosure')}>Disclosure</button>
                 <button onClick={this.handleSelectTable('sections', 'paragraph')}>Paragraph</button>
-                <button onClick={this.handleSelectTable('sections')}>Section</button>
-                <button onClick={this.handleSelectTable('news')}>News</button>
-                <button onClick={this.handleSelectTable('documents')}>Document</button>
-                <button onClick={this.handleSelectTable('notices')}>Notice</button>
-                <button onClick={this.handleSelectTable('committeeMembers')}>Committee Member</button>
+                <button onClick={this.handleSelectTable('news', 'news')}>News</button>
+                <button onClick={this.handleSelectTable('documents', 'document')}>Document</button>
+                <button onClick={this.handleSelectTable('notices', 'notice')}>Notice</button>
+                <button onClick={this.handleSelectTable('emails', 'email')}>Email</button>
+                <button onClick={this.handleSelectTable('committeeMembers', 'committeeMember')}>Committee Member</button>
+                <button onClick={this.handleSelectTable('markdownBlocks', 'markdownBlock')}>Markdown Block</button>
               </div>
             : null
         }
@@ -212,7 +270,14 @@ export default class ContentForm extends Component {
                               value={_get(this.state.data, mapping, ' ')}
                               onChange={this.handleOnChange(mapping)}
                             />
-                          : <input
+                          : _get(inputFieldOverrides, `[${mapping}].type`) === 'markdown'
+                            ? <ReactMde
+                                onChange={this.handleMarkdownChange}
+                                editorState={this.state.mdeState}
+                                layout="horizontal"
+                                generateMarkdownPreview={(markdown) => Promise.resolve(this.converter.makeHtml(markdown))}
+                              />
+                            : <input
                               name={mapping}
                               value={_get(this.state.data, mapping, ' ')}
                               onChange={this.handleOnChange(mapping)}

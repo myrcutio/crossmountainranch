@@ -8,6 +8,8 @@ import CommitteeMember from '../CommitteeMember'
 import Title from '../Title'
 import Disclosure from '../Disclosure'
 import Paragraph from '../Paragraph'
+import MarkdownBlock from '../MarkdownBlock'
+import ObfuscatedEmail from '../ObfuscatedEmail'
 import ModalWithHandlers from "../AdminForms/ModalWithHandlers"
 import _orderBy from "lodash.orderby"
 import _get from 'lodash.get'
@@ -34,6 +36,14 @@ const identifyingComponentFields = {
   disclosure: {
     table: 'sections',
     component: Disclosure
+  },
+  email: {
+    table: 'emails',
+    component: ObfuscatedEmail
+  },
+  markdown: {
+    table: 'markdownBlocks',
+    component: MarkdownBlock
   },
   noticeTitle: {
     table: 'notices',
